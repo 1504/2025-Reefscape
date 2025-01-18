@@ -1,4 +1,4 @@
-# MAXSwerve Python Template
+# MAXSwerve Python Template originally from: https://github.com/edubu/MAXSwerve-Python-Template
 The python implementation of [REV Robotics MAXSwerve Modules](https://docs.revrobotics.com/ion-build-system/motion/maxswerve) as adapted from the [REV Robotics CPP Template](https://github.com/REVrobotics/MAXSwerve-Cpp-Template) for use in an environment using RobotPy. Suitable for FIRST Robotics Teams that want to utilize swerve drive and are using Python for their robot code. As Python is now officially supported by FRC as of 2024, a python adaptation is necessary.
 
 ## Requirements
