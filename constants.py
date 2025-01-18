@@ -14,8 +14,8 @@ kMagnitudeSlewRate = 1.8 # percent per second (1 = 100%)
 kRotationalSlewRate = 2.0 # percent per second (1 = 100%)
 
 # Chassis configuration
-kTrackWidth = 0.6953 # Distance between centers of right and left wheels on robot METERS
-kWheelBase = 0.6953 # Distance between centers of front and back wheels on robot METERS
+kTrackWidth = 0.5715 # Distance between centers of right and left wheels on robot METERS
+kWheelBase = 0.5715 # Distance between centers of front and back wheels on robot METERS
 
 # Angular offsets of the modules relative to the chassis in radians
 kFrontLeftChassisAngularOffset = -math.pi / 2
@@ -41,7 +41,7 @@ kTurningEncoderInverted = True
 
 # The MaxSwerve module can be configured with one of the three pinion gears: 12T, 13T, or 14T.
 # This changes the drive speed of the module ( a pinion gear with more teeth will result in a robot that drives faster)
-kDrivingMotorPinionTeeth = 13
+kDrivingMotorPinionTeeth = 14
 
 # Calculations required for driving motor conversion factors and feed forward
 kDrivingMotorFreeSpeedRps = 5676.0 / 60
