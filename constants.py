@@ -2,6 +2,7 @@ import math
 import rev
 import wpilib
 import wpimath.trajectory
+from rev import SparkMax, SparkMaxConfig, SparkFlex, SparkFlexConfig, SparkBase
 
 """ DRIVE CONSTANTS """
 # Driving parameters - Note that these are not the maximum capable speeds of
@@ -74,8 +75,8 @@ kTurningFF = 0
 kTurningMinOutput = -1
 kTurningMaxOutput = 1
 
-kDrivingMotorIdleMode: rev.CANSparkMax.IdleMode = rev.CANSparkMax.IdleMode.kCoast
-kTurningMotorIdleMode: rev.CANSparkMax.IdleMode = rev.CANSparkMax.IdleMode.kCoast
+kDrivingMotorIdleMode: SparkMax.IdleMode = SparkMax.IdleMode.kCoast
+kTurningMotorIdleMode: SparkMax.IdleMode = SparkMax.IdleMode.kCoast
 
 kDrivingMotorCurrentLimit = 50 # Amps
 kTurningMotorCurrentLimit = 20 # Amps
