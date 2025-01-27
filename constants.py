@@ -75,8 +75,8 @@ kTurningFF = 0
 kTurningMinOutput = -1
 kTurningMaxOutput = 1
 
-kDrivingMotorIdleMode: SparkMax.IdleMode = SparkMax.IdleMode.kCoast
-kTurningMotorIdleMode: SparkMax.IdleMode = SparkMax.IdleMode.kCoast
+kDrivingMotorIdleMode: SparkMax.IdleMode = SparkMaxConfig.IdleMode.kCoast
+kTurningMotorIdleMode: SparkMax.IdleMode = SparkMaxConfig.IdleMode.kCoast
 
 kDrivingMotorCurrentLimit = 50 # Amps
 kTurningMotorCurrentLimit = 20 # Amps
