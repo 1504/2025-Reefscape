@@ -25,15 +25,17 @@ kRearLeftChassisAngularOffset = math.pi
 kRearRightChassisAngularOffset = math.pi / 2
 
 # SPARK MAX CAN IDs
-kFrontLeftDrivingCanId = 2
-kRearLeftDrivingCanId = 8
-kFrontRightDrivingCanId = 4
-kRearRightDrivingCanId = 6
+kRearRightDrivingCanId = 1
+kRearRightTurningCanId = 2
 
-kFrontLeftTurningCanId = 3
-kRearLeftTurningCanId = 1
-kFrontRightTurningCanId = 5
-kRearRightTurningCanId = 7
+kRearLeftDrivingCanId = 3
+kRearLeftTurningCanId = 4
+
+kFrontLeftDrivingCanId = 5
+kFrontLeftTurningCanId = 6
+
+kFrontRightDrivingCanId = 7
+kFrontRightTurningCanId = 8
 
 """ MODULE CONSTANTS """
 # Invert the turning encoder, since the output shaft rotates in the opposite direction
