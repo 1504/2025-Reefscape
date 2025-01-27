@@ -150,8 +150,8 @@ class SwerveModule:
         )
 
         # Command driving and turning SPARK MAX toward their respective setpoints
-        self.drivingPIDController.setReference(optimizedDesiredState.speed, rev.CANSparkMax.ControlType.kVelocity)
-        self.turningPIDController.setReference(optimizedDesiredState.angle.radians(), rev.CANSparkMax.ControlType.kPosition)
+        self.drivingPIDController.setReference(optimizedDesiredState.speed, rev.SparkMax.ControlType.kVelocity)
+        self.turningPIDController.setReference(optimizedDesiredState.angle.radians(), rev.SparkMax.ControlType.kPosition)
 
         self.desiredState = desiredState
 
