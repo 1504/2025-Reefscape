@@ -16,7 +16,7 @@ kModuleMaxAngularAcceleration = math.tau
 
 
 class SwerveModule:
-    def __init__(self, driveMotorChannel: int, turningMotorChannel: int, chassisAngularOffset: float) -> None:
+    def __init__(self, driveMotorChannel: int, turningMotorChannel: int, chassis_angular_offset: float) -> None:
         """Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
 
         :param driveMotorChannel:      PWM output for the drive motor.
@@ -24,8 +24,8 @@ class SwerveModule:
         """
 
         """ Initialize Spark Max motor controllers"""
-        self.drivingSparkMax: SparkMax = SparkMax(driveMotorChannel, SparkMax.MotorType.kBrushless)
-        self.turningSparkMax: SparkMax = SparkMax(turningMotorChannel, SparkMax.MotorType.kBrushless)
+        self.driving_spark_max: SparkMax = SparkMax(driveMotorChannel, SparkMax.MotorType.kBrushless)
+        self.turning_spark_max: SparkMax = SparkMax(turningMotorChannel, SparkMax.MotorType.kBrushless)
 
         """ Create Config Variables """ 
         self.driving_config = SparkMaxConfig()
@@ -35,8 +35,8 @@ class SwerveModule:
         # Get Encoder Objects from Spark Max
         # driving: relative encoder
         # turning: absolute encoder
-        self.drivingEncoder = self.drivingSparkMax.getEncoder()
-        self.turningEncoder = self.turningSparkMax.getAbsoluteEncoder()
+        self.driving_encoder = self.driving_spark_max.getEncoder()
+        self.turningEncoder = self.turning_spark_max.getAbsoluteEncoder()
 
         # Apply position and velocity conversion factors for the driving encoder.
         # We want these in radians and radians per second to use with WPILibs swerve APIs
@@ -56,10 +56,10 @@ class SwerveModule:
 
         """ Initialize PID Controllers"""
         # create spark max pid controllers
-        # self.drivingPIDController: rev.SparkPIDController = self.drivingSparkMax.getPIDController()
-        # self.turningPIDController: rev.SparkPIDController = self.turningSparkMax.getPIDController()
-        self.drivingPIDController = self.drivingSparkMax.getClosedLoopController()
-        self.turningPIDController = self.turningSparkMax.getClosedLoopController()
+        # self.driving_pid_controller: rev.SparkPIDController = self.driving_spark_max.getPIDController()
+        # self.turning_pid_controller: rev.SparkPIDController = self.turning_spark_max.getPIDController()
+        self.driving_pid_controller = self.driving_spark_max.getClosedLoopController()
+        self.turning_pid_controller = self.turning_spark_max.getClosedLoopController()
 
         self.driving_config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder)
         self.turning_config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
@@ -98,60 +98,60 @@ class SwerveModule:
 
         # Save the SPARK MAX configurations. If a SPARK MAX browns out during
         # operation, it will maintain the above configurations
-        # self.drivingSparkMax.burnFlash()
-        # self.turningSparkMax.burnFlash()
+        # self.driving_spark_max.burnFlash()
+        # self.turning_spark_max.burnFlash()
 
-        self.drivingSparkMax.configure(self.driving_config,
+        self.driving_spark_max.configure(self.driving_config,
                                           SparkBase.ResetMode.kResetSafeParameters,
                                           SparkBase.PersistMode.kPersistParameters)
-        self.turningSparkMax.configure(self.turning_config,
+        self.turning_spark_max.configure(self.turning_config,
                                          SparkBase.ResetMode.kResetSafeParameters,
                                          SparkBase.PersistMode.kPersistParameters)
 
         # Swerve drive parameters
-        self.chassisAngularOffset = chassisAngularOffset
-        self.desiredState = wpimath.kinematics.SwerveModuleState(0.0, wpimath.geometry.Rotation2d(self.turningEncoder.getPosition()))
-        self.drivingEncoder.setPosition(0)
+        self.chassis_angular_offset = chassis_angular_offset
+        self.desired_state = wpimath.kinematics.SwerveModuleState(0.0, wpimath.geometry.Rotation2d(self.turningEncoder.getPosition())) #diff
+        self.driving_encoder.setPosition(0)
 
-    def getState(self) -> wpimath.kinematics.SwerveModuleState:
+    def get_state(self) -> wpimath.kinematics.SwerveModuleState:
         """Returns the current state of the module.
 
         :returns: The current state of the module.
         """
         return wpimath.kinematics.SwerveModuleState(
-            self.drivingEncoder.getVelocity(),
-            wpimath.geometry.Rotation2d(self.turningEncoder.getPosition() - self.chassisAngularOffset),
+            self.driving_encoder.getVelocity(),
+            wpimath.geometry.Rotation2d(self.turningEncoder.getPosition() - self.chassis_angular_offset),
         )
 
-    def getPosition(self) -> wpimath.kinematics.SwerveModulePosition:
+    def get_position(self) -> wpimath.kinematics.SwerveModulePosition:
         """Returns the current position of the module.
 
         :returns: The current position of the module.
         """
         return wpimath.kinematics.SwerveModulePosition(
-            self.drivingEncoder.getPosition(),
-            wpimath.geometry.Rotation2d(self.turningEncoder.getPosition() - self.chassisAngularOffset),
+            self.driving_encoder.getPosition(),
+            wpimath.geometry.Rotation2d(self.turningEncoder.getPosition() - self.chassis_angular_offset),
         )
 
-    def setDesiredState(
-        self, desiredState: wpimath.kinematics.SwerveModuleState
+    def set_desired_state(
+        self, desired_state: wpimath.kinematics.SwerveModuleState
     ) -> None:
         """Sets the desired state for the module.
 
-        :param desiredState: Desired state with speed and angle.
+        :param desired_state: Desired state with speed and angle.
         """
         # Apply chassis angular offset to the desired state
-        correctedDesiredState = wpimath.kinematics.SwerveModuleState(desiredState.speed, desiredState.angle + wpimath.geometry.Rotation2d(self.chassisAngularOffset))
-        turningEncoderPosition = wpimath.geometry.Rotation2d(self.turningEncoder.getPosition())
+        corrected_desired_state = wpimath.kinematics.SwerveModuleState(desired_state.speed, desired_state.angle + wpimath.geometry.Rotation2d(self.chassis_angular_offset))
+        turning_encoder_position = wpimath.geometry.Rotation2d(self.turningEncoder.getPosition())
 
         # Optimize the reference state to avoid spinning further than 90 degrees
-        correctedDesiredState.optimize(turningEncoderPosition)
+        corrected_desired_state.optimize(turning_encoder_position)
 
         # Command driving and turning SPARK MAX toward their respective setpoints
-        self.drivingPIDController.setReference(correctedDesiredState.speed, rev.SparkMax.ControlType.kVelocity)
-        self.turningPIDController.setReference(correctedDesiredState.angle.radians(), rev.SparkMax.ControlType.kPosition)
+        self.driving_pid_controller.setReference(corrected_desired_state.speed, rev.SparkMax.ControlType.kVelocity)
+        self.turning_pid_controller.setReference(corrected_desired_state.angle.radians(), rev.SparkMax.ControlType.kPosition)
 
-        self.desiredState = desiredState
+        self.desired_state = desired_state
 
-    def resetEncoders(self) -> None:
-        self.drivingEncoder.setPosition(0)
+    def reset_encoders(self) -> None:
+        self.driving_encoder.setPosition(0)

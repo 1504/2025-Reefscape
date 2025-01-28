@@ -25,22 +25,22 @@ class DriveSubsystem:
             wpimath.geometry.Translation2d(-constants.kWheelBase / 2, -constants.kTrackWidth / 2),
         )
 
-        self.frontLeft = swervemodule.SwerveModule(
+        self.front_left = swervemodule.SwerveModule(
             constants.kFrontLeftDrivingCanId, 
             constants.kFrontLeftTurningCanId,
             constants.kFrontLeftChassisAngularOffset
         )
-        self.rearLeft = swervemodule.SwerveModule(
+        self.rear_left = swervemodule.SwerveModule(
             constants.kRearLeftDrivingCanId,
             constants.kRearLeftTurningCanId,
             constants.kRearLeftChassisAngularOffset
         )
-        self.frontRight = swervemodule.SwerveModule(
+        self.front_right = swervemodule.SwerveModule(
             constants.kFrontRightDrivingCanId,
             constants.kFrontRightTurningCanId,
             constants.kFrontRightChassisAngularOffset
         )
-        self.rearRight = swervemodule.SwerveModule(
+        self.rear_right = swervemodule.SwerveModule(
             constants.kRearRightDrivingCanId,
             constants.kRearRightTurningCanId,
             constants.kRearRightChassisAngularOffset
@@ -50,14 +50,14 @@ class DriveSubsystem:
         self.gyro = navx.AHRS(navx.AHRS.NavXComType.kMXP_SPI)
 
         # Slew rate filter variables for controlling the lateral acceleration
-        self.currentRotation = 0.0
-        self.currentTranslationDir = 0.0
-        self.currentTranslationMag = 0.0
+        self.current_rotation = 0.0
+        self.current_translation_dir = 0.0
+        self.current_translation_mag = 0.0
 
-        self.magLimiter = wpimath.filter.SlewRateLimiter(constants.kMagnitudeSlewRate / 1)
-        self.rotLimiter = wpimath.filter.SlewRateLimiter(constants.kRotationalSlewRate / 1)
+        self.mag_limiter = wpimath.filter.SlewRateLimiter(constants.kMagnitudeSlewRate / 1)
+        self.rot_limiter = wpimath.filter.SlewRateLimiter(constants.kRotationalSlewRate / 1)
 
-        self.prevTime = ntcore._now() * pow(1, -6) # secodns
+        self.prev_time = ntcore._now() * pow(1, -6) # secodns
 
         # Odometry class for tracking robot pose
         # 4 defines the number of modules
@@ -65,11 +65,11 @@ class DriveSubsystem:
             self.kDriveKinematics,
             # wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(self.gyro.getAngle())),
             self.gyro.getRotation2d(),
-            (self.frontLeft.getPosition(), self.frontRight.getPosition(), self.rearLeft.getPosition(), self.rearRight.getPosition()),
+            (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()),
             wpimath.geometry.Pose2d()
         )
 
-        self.resetEncoders()
+        self.reset_encoders()
 
         # logger object for sending data to smart dashboard
         # self.logger = networklogger.NetworkLogger()
@@ -80,7 +80,7 @@ class DriveSubsystem:
         self.odometry.update(
             # wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(self.gyro.getAngle())),
             self.gyro.getRotation2d(),
-            (self.frontLeft.getPosition(), self.frontRight.getPosition(), self.rearLeft.getPosition(), self.rearRight.getPosition()),
+            (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()),
         )
 
         #self.logger.log_gyro(self.gyro.getAngle())
@@ -89,103 +89,103 @@ class DriveSubsystem:
 
     def drive(
         self,
-        xSpeed: float,
-        ySpeed: float,
+        x_speed: float,
+        y_speed: float,
         rot: float,
-        fieldRelative: bool,
-        rateLimit: bool,
+        field_relative: bool,
+        rate_limit: bool,
     ) -> None:
         """
         Method to drive the robot using joystick info.
-        :param xSpeed: Speed of the robot in the x direction (forward).
-        :param ySpeed: Speed of the robot in the y direction (sideways).
+        :param x_speed: Speed of the robot in the x direction (forward).
+        :param y_speed: Speed of the robot in the y direction (sideways).
         :param rot: Angular rate of the robot.
-        :param fieldRelative: Whether the provided x and y speeds are relative to the field.
-        :param rateLimit: Whether to enable rate limiting for smoother control
+        :param field_relative: Whether the provided x and y speeds are relative to the field.
+        :param rate_limit: Whether to enable rate limiting for smoother control
         :param periodSeconds: Time
         """
-        xSpeedCommanded = None
-        ySpeedCommanded = None
+        x_speed_commanded = None
+        y_speed_commanded = None
 
-        if rateLimit:
+        if rate_limit:
             # Convert XY to polar for rate limiting
-            inputTranslationDir = math.atan2(ySpeed, xSpeed)
-            inputTranslationMag = math.sqrt(pow(xSpeed, 2) + pow(ySpeed, 2))
+            input_translation_dir = math.atan2(y_speed, x_speed)
+            input_translation_mag = math.sqrt(pow(x_speed, 2) + pow(y_speed, 2))
 
             # Calculate the direction slew rate based on an estimate of lateral acceleration
-            directionSlewRate = None
-            if self.currentTranslationMag != 0.0:
-                directionSlewRate = abs(constants.kDirectionSlewRate / self.currentTranslationMag)
+            direction_slew_rate = None
+            if self.current_translation_mag != 0.0:
+                direction_slew_rate = abs(constants.kDirectionSlewRate / self.current_translation_mag)
             else:
-                directionSlewRate = 500.0 # some high number that means the slew rate is effectively instantaneous
+                direction_slew_rate = 500.0 # some high number that means the slew rate is effectively instantaneous
             
-            currentTime = ntcore._now() * pow(1, -6)
-            elapsedTime = currentTime - self.prevTime
-            angleDif = swerveutils.angleDifference(inputTranslationDir, self.currentTranslationDir)
+            current_time = ntcore._now() * pow(1, -6)
+            elapsed_time = current_time - self.prev_time
+            angleDif = swerveutils.angleDifference(input_translation_dir, self.current_translation_dir)
 
             if angleDif < 0.45 * math.pi:
-                self.currentTranslationDir = swerveutils.stepTowardsCircular(self.currentTranslationDir, inputTranslationDir, directionSlewRate * elapsedTime)
-                self.currentTranslationMag = self.magLimiter.calculate(inputTranslationMag)
+                self.current_translation_dir = swerveutils.stepTowardsCircular(self.current_translation_dir, input_translation_dir, direction_slew_rate * elapsed_time)
+                self.current_translation_mag = self.mag_limiter.calculate(input_translation_mag)
             elif angleDif > 0.85 * math.pi:
-                if self.currentTranslationMag > 1e-4:
-                    self.currentTranslationMag = self.magLimiter.calculate(0.0)
+                if self.current_translation_mag > 1e-4:
+                    self.current_translation_mag = self.mag_limiter.calculate(0.0)
                 else:
-                    self.currentTranslationDir = swerveutils.wrapAngle(self.currentTranslationDir + math.pi)
-                    self.currentTranslationMag = self.magLimiter.calculate(inputTranslationMag)
+                    self.current_translation_dir = swerveutils.wrapAngle(self.current_translation_dir + math.pi)
+                    self.current_translation_mag = self.mag_limiter.calculate(input_translation_mag)
             else:
-                self.currentTranslationDir = swerveutils.stepTowardsCircular(self.currentTranslationDir, inputTranslationDir, directionSlewRate * elapsedTime)
-                self.currentTranslationMag = self.magLimiter.calculate(0.0)
+                self.current_translation_dir = swerveutils.stepTowardsCircular(self.current_translation_dir, input_translation_dir, direction_slew_rate * elapsed_time)
+                self.current_translation_mag = self.mag_limiter.calculate(0.0)
             
-            self.prevTime = currentTime
+            self.prev_time = current_time
 
-            xSpeedCommanded = self.currentTranslationMag * math.cos(self.currentTranslationDir)
-            ySpeedCommanded = self.currentTranslationMag * math.sin(self.currentTranslationDir)
-            self.currentRotation = self.rotLimiter.calculate(rot)
+            x_speed_commanded = self.current_translation_mag * math.cos(self.current_translation_dir)
+            y_speed_commanded = self.current_translation_mag * math.sin(self.current_translation_dir)
+            self.current_rotation = self.rot_limiter.calculate(rot)
         else:
-            xSpeedCommanded = xSpeed
-            ySpeedCommanded = ySpeed
-            self.currentRotation = rot
+            x_speed_commanded = x_speed
+            y_speed_commanded = y_speed
+            self.current_rotation = rot
         
         # Convert the commanded speeds into correct units for the drivetrain
-        xSpeedDelivered = xSpeedCommanded * constants.kMaxSpeed
-        ySpeedDelivered = ySpeedCommanded * constants.kMaxSpeed
-        rotDelivered = self.currentRotation * constants.kMaxAngularSpeed
+        x_speedDelivered = x_speed_commanded * constants.kMaxSpeed
+        y_speedDelivered = y_speed_commanded * constants.kMaxSpeed
+        rotDelivered = self.current_rotation * constants.kMaxAngularSpeed
 
         (fl, fr, bl, br) = self.kDriveKinematics.toSwerveModuleStates(
             wpimath.kinematics.ChassisSpeeds.fromFieldRelativeSpeeds(
-                xSpeedDelivered, ySpeedDelivered, rotDelivered, self.gyro.getRotation2d()#wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(self.gyro.getAngle()))
-            ) if fieldRelative 
-            else wpimath.kinematics.ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered)
+                x_speedDelivered, y_speedDelivered, rotDelivered, self.gyro.getRotation2d()#wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(self.gyro.getAngle()))
+            ) if field_relative 
+            else wpimath.kinematics.ChassisSpeeds(x_speedDelivered, y_speedDelivered, rotDelivered)
         )
 
 
         # Set the swerve modules to desired states
-        self.frontLeft.setDesiredState(fl)
-        self.frontRight.setDesiredState(fr)
-        self.rearLeft.setDesiredState(bl)
-        self.rearRight.setDesiredState(br)
+        self.front_left.set_desired_state(fl)
+        self.front_right.set_desired_state(fr)
+        self.rear_left.set_desired_state(bl)
+        self.rear_right.set_desired_state(br)
 
 
 
     def setX(self) -> None:
-        self.frontLeft.setDesiredState(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(45))))
-        self.frontRight.setDesiredState(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(-45))))
-        self.rearLeft.setDesiredState(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(-45))))
-        self.rearRight.setDesiredState(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(45))))
+        self.front_left.set_desired_state(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(45))))
+        self.front_right.set_desired_state(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(-45))))
+        self.rear_left.set_desired_state(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(-45))))
+        self.rear_right.set_desired_state(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(45))))
 
     def setModuleStates(self, desiredStates: tuple[wpimath.kinematics.SwerveModuleState]) -> None:
         self.kDriveKinematics.desaturateWheelSpeeds(desiredStates, constants.kMaxSpeed)
 
-        self.frontLeft.setDesiredState(desiredStates[0])
-        self.frontRight.setDesiredState(desiredStates[1])
-        self.rearLeft.setDesiredState(desiredStates[2])
-        self.rearRight.setDesiredState(desiredStates[3])
+        self.front_left.set_desired_state(desiredStates[0])
+        self.front_right.set_desired_state(desiredStates[1])
+        self.rear_left.set_desired_state(desiredStates[2])
+        self.rear_right.set_desired_state(desiredStates[3])
 
-    def resetEncoders(self) -> None:
-        self.frontLeft.resetEncoders()
-        self.rearLeft.resetEncoders()
-        self.frontRight.resetEncoders()
-        self.rearRight.resetEncoders()
+    def reset_encoders(self) -> None:
+        self.front_left.reset_encoders()
+        self.rear_left.reset_encoders()
+        self.front_right.reset_encoders()
+        self.rear_right.reset_encoders()
 
     # Returns the robot's heading in degrees from -180 to 180
     def getHeading(self) -> float:
@@ -206,4 +206,4 @@ class DriveSubsystem:
     
     # Resets the odometry to the specified pose
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
-        self.odometry.resetPosition(self.getHeading(), (self.frontLeft.getPosition(), self.frontRight.getPosition(), self.rearLeft.getPosition(), self.rearRight.getPosition()), pose)
+        self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
