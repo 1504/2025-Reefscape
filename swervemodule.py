@@ -142,16 +142,14 @@ class SwerveModule:
         """
         # Apply chassis angular offset to the desired state
         correctedDesiredState = wpimath.kinematics.SwerveModuleState(desiredState.speed, desiredState.angle + wpimath.geometry.Rotation2d(self.chassisAngularOffset))
-
         turningEncoderPosition = wpimath.geometry.Rotation2d(self.turningEncoder.getPosition())
+
         # Optimize the reference state to avoid spinning further than 90 degrees
-        optimizedDesiredState = wpimath.kinematics.SwerveModuleState.optimize(
-            correctedDesiredState, turningEncoderPosition
-        )
+        correctedDesiredState.optimize(turningEncoderPosition)
 
         # Command driving and turning SPARK MAX toward their respective setpoints
-        self.drivingPIDController.setReference(optimizedDesiredState.speed, rev.SparkMax.ControlType.kVelocity)
-        self.turningPIDController.setReference(optimizedDesiredState.angle.radians(), rev.SparkMax.ControlType.kPosition)
+        self.drivingPIDController.setReference(correctedDesiredState.speed, rev.SparkMax.ControlType.kVelocity)
+        self.turningPIDController.setReference(correctedDesiredState.angle.radians(), rev.SparkMax.ControlType.kPosition)
 
         self.desiredState = desiredState
 
