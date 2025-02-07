@@ -70,7 +70,7 @@ kDrivingFF = (1/kDriveWheelFreeSpeedRps)
 kDrivingMinOutput = -1
 kDrivingMaxOutput = 1
 
-kTurningP = 1
+kTurningP = 2
 kTurningI = 0
 kTurningD = 0
 kTurningFF = 0
@@ -82,6 +82,12 @@ kTurningMotorIdleMode: SparkMax.IdleMode = SparkMaxConfig.IdleMode.kCoast
 
 kDrivingMotorCurrentLimit = 50 # Amps
 kTurningMotorCurrentLimit = 20 # Amps
+
+# Absolute encoder offsets for each module
+kRearRightAbsoluteEncoderOffset  = 0.1814
+kRearLeftAbsoluteEncoderOffset   = 0.803
+kFrontLeftAbsoluteEncoderOffset  = 0.8546
+kFrontRightAbsoluteEncoderOffset = 0.665
 
 """ Auto Constants """
 kMaxSpeed = 3 # meters per second

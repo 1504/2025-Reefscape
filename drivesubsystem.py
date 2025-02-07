@@ -28,22 +28,26 @@ class DriveSubsystem:
         self.front_left = swervemodule.SwerveModule(
             constants.kFrontLeftDrivingCanId, 
             constants.kFrontLeftTurningCanId,
-            constants.kFrontLeftChassisAngularOffset
+            constants.kFrontLeftChassisAngularOffset,
+            constants.kFrontLeftAbsoluteEncoderOffset
         )
         self.rear_left = swervemodule.SwerveModule(
             constants.kRearLeftDrivingCanId,
             constants.kRearLeftTurningCanId,
-            constants.kRearLeftChassisAngularOffset
+            constants.kRearLeftChassisAngularOffset,
+            constants.kRearLeftAbsoluteEncoderOffset
         )
         self.front_right = swervemodule.SwerveModule(
             constants.kFrontRightDrivingCanId,
             constants.kFrontRightTurningCanId,
-            constants.kFrontRightChassisAngularOffset
+            constants.kFrontRightChassisAngularOffset,
+            constants.kFrontRightAbsoluteEncoderOffset
         )
         self.rear_right = swervemodule.SwerveModule(
             constants.kRearRightDrivingCanId,
             constants.kRearRightTurningCanId,
-            constants.kRearRightChassisAngularOffset
+            constants.kRearRightChassisAngularOffset,
+            constants.kRearRightAbsoluteEncoderOffset
         )
 
         # the gyro sensor

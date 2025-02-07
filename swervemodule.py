@@ -16,7 +16,7 @@ kModuleMaxAngularAcceleration = math.tau
 
 
 class SwerveModule:
-    def __init__(self, driveMotorChannel: int, turningMotorChannel: int, chassis_angular_offset: float) -> None:
+    def __init__(self, driveMotorChannel: int, turningMotorChannel: int, chassis_angular_offset: float, absolute_encoder_offset: float) -> None:
         """Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
 
         :param driveMotorChannel:      PWM output for the drive motor.
@@ -45,8 +45,9 @@ class SwerveModule:
 
         # Apply position and velocity conversion factors for the turning encoder.
         # We want these in radians and radians per second to use with WPILibs swerve APIs
-        self.turning_config.encoder.positionConversionFactor(constants.kTurningEncoderPositionFactor)
-        self.turning_config.encoder.velocityConversionFactor(constants.kTurningEncoderVelocityFactor)
+        self.turning_config.absoluteEncoder.positionConversionFactor(constants.kTurningEncoderPositionFactor)
+        self.turning_config.absoluteEncoder.velocityConversionFactor(constants.kTurningEncoderVelocityFactor)
+        self.turning_config.absoluteEncoder.zeroOffset(absolute_encoder_offset)
 
         # Invert the turning encoder, since the output shaft rotates in the opposite
         # direction of the steering motor in the MAXSwerve Module.
