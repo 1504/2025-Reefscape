@@ -1,3 +1,5 @@
+#being worked on by emma, advik & chatur
+
 import rev
 import wpilib
 from wpilib import TimedRobot, Joystick
@@ -5,25 +7,31 @@ import commands2
 from commands2 import Command
 from commands2 import Subsystem
 
-class IntakeSubsystem(Subsystem):
+class ElevatorSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
 
-        #0 & 1 are placeholder numbers
-        self.leftMotor = rev.CANSparkMax(0, rev.CANSparkMax.MotorType.kBrushless)
-        self.rightMotor = rev.CANSparkMax(1, rev.CANSparkMax.MotorType.kBrushless)
-        self.motors = wpilib.MotorControllerGroup(self.leftMotor, self.rightMotor)
+        #placeholder number
+        self.Motor = rev.CANSparkMax(0, rev.CANSparkMax.MotorType.kBrushless)
 
-    def intake(self):
-        #placeholder values
-        self.leftMotor.set(-1.0)
-        self.rightMotor.set(1.0)
+    def levelOne(self):
+        #certain angle
+        pass
     
-    #outtake?
+    def levelTwo(self):
+        #certain angle
+        pass
+
+    def levelThree(self):
+        #certain angle
+        pass
+
+    def levelFour(self):
+        #certain angle
+        pass
     
     def stop(self):
-        self.leftMotor.set(0.0)
-        self.rightMotor.set(0.0)
+        self.Motor.set(0.0)
 
     #necessity of these 2?
     def periodic(self):
@@ -33,20 +41,22 @@ class IntakeSubsystem(Subsystem):
         # This method will be called once per scheduler run during simulation
         pass
 
-class IntakeCommand(Command):
-    def __init__(self, intake_subsystem):
+class ElevatorCommand(Command):
+    def __init__(self, elevator_subsystem):
         super().__init__()
 
-        self.intake_subsystem = intake_subsystem
+        self.elevator_subsystem = elevator_subsystem
 
     def initialize(self):
-        self.intake_subsystem.intake()
+        #idk what this is
+        #self.elevator_subsystem.intake()
+        pass
 
     def execute(self):
         pass 
 
     def end(self, interrupted):
-        self.intake_subsystem.stop()
+        self.elevator_subsystem.stop()
 
     #necessity of these 2
     def periodic(self):
@@ -59,11 +69,17 @@ class IntakeCommand(Command):
 class Robot(TimedRobot):
     def robotInit(self):
         self.joystick = Joystick(0)#placeholder
-        self.intake_subsystem = IntakeSubsystem()
-        self.intake_command = IntakeCommand(self.intake_subsystem)
+        self.elevator_subsystem = ElevatorSubsystem()
+        self.elevator_command = ElevatorCommand(self.elevator_subsystem)
 
     def teleopPeriodic(self):
         if self.joystick.getRawButton(1):#palceholder
-            self.intake_subsystem.intake()
+            self.elevator_subsystem.levelOne()
+        if self.joystick.getRawButton(2):#palceholder
+            self.elevator_subsystem.levelTwo()
+        if self.joystick.getRawButton(2):#palceholder
+            self.elevator_subsystem.levelThree()
+        if self.joystick.getRawButton(2):#palceholder
+            self.elevator_subsystem.levelFour()
         else:
-            self.intake_subsystem.stop()
+            self.elevator_subsystem.stop()
