@@ -1,37 +1,46 @@
 #being worked on by emma, advik & chatur
 
-import rev
+'''Import'''
 import wpilib
-from wpilib import TimedRobot, Joystick
+import math
+
+import rev
+
 import commands2
-from commands2 import Command
 from commands2 import Subsystem
+
+import constants
 
 class ElevatorSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
 
         #placeholder number
-        self.Motor = rev.CANSparkMax(0, rev.CANSparkMax.MotorType.kBrushless)
+        self.elevatorMotor = rev.CANSparkMax(0, rev.CANSparkMax.MotorType.kBrushless)
+        self.elevatorEncoder = self.elevatorMotor.getEncoder()
 
-    def levelOne(self):
-        #certain angle
-        pass
+    def l1(self):
+        while self.elevatorEncoder.getPosition() < constants.kL1RotationDistance:
+            self.elevatorMotor.set(constants.kL1RotationSpeed)
+        self.elevatorMotor.set(0.0)
     
-    def levelTwo(self):
-        #certain angle
-        pass
-
-    def levelThree(self):
-        #certain angle
-        pass
-
-    def levelFour(self):
-        #certain angle
-        pass
+    def l2(self):
+        while self.elevatorEncoder.getPosition() < constants.kL2RotationDistance:
+            self.elevatorMotor.set(constants.kL2RotationSpeed)
+        self.elevatorMotor.set(0.0)
+    
+    def l3(self):
+        while self.elevatorEncoder.getPosition() < constants.kL3RotationDistance:
+            self.elevatorMotor.set(constants.kL3RotationSpeed)
+        self.elevatorMotor.set(0.0)
+    
+    def l4(self):
+        while self.elevatorEncoder.getPosition() < constants.kL4RotationDistance:
+            self.elevatorMotor.set(constants.kL4RotationSpeed)
+        self.elevatorMotor.set(0.0)
     
     def stop(self):
-        self.Motor.set(0.0)
+        self.elevatorMotor.set(0.0)
 
     #necessity of these 2?
     def periodic(self):
@@ -46,17 +55,15 @@ class ElevatorCommand(Command):
         super().__init__()
 
         self.elevator_subsystem = elevator_subsystem
-
+    #stopped here
     def initialize(self):
-        #idk what this is
-        #self.elevator_subsystem.intake()
-        pass
+        self.elevator_subsystem.intake()
 
     def execute(self):
         pass 
 
     def end(self, interrupted):
-        self.elevator_subsystem.stop()
+        self.intake_subsystem.stop()
 
     #necessity of these 2
     def periodic(self):
@@ -69,17 +76,11 @@ class ElevatorCommand(Command):
 class Robot(TimedRobot):
     def robotInit(self):
         self.joystick = Joystick(0)#placeholder
-        self.elevator_subsystem = ElevatorSubsystem()
-        self.elevator_command = ElevatorCommand(self.elevator_subsystem)
+        self.intake_subsystem = IntakeSubsystem()
+        self.intake_command = IntakeCommand(self.intake_subsystem)
 
     def teleopPeriodic(self):
         if self.joystick.getRawButton(1):#palceholder
-            self.elevator_subsystem.levelOne()
-        if self.joystick.getRawButton(2):#palceholder
-            self.elevator_subsystem.levelTwo()
-        if self.joystick.getRawButton(2):#palceholder
-            self.elevator_subsystem.levelThree()
-        if self.joystick.getRawButton(2):#palceholder
-            self.elevator_subsystem.levelFour()
+            self.intake_subsystem.intake()
         else:
-            self.elevator_subsystem.stop()
+            self.intake_subsystem.stop()
