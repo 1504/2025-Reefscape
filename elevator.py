@@ -16,37 +16,29 @@ class ElevatorSubsystem(Subsystem):
         super().__init__()
 
         #placeholder number
-        self.elevatorMotor: SparkMax = SparkMax(0, SparkMax.MotorType.kBrushless)
-        self.elevatorEncoder = self.elevatorMotor.getEncoder()
+        self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#this one is inverted
+        self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)
+        self.elevatorEncoder1 = self.elevatorMotor1.getEncoder()
+        self.elevatorEncoder2 = self.elevatorMotor2.getEncoder()
 
     def l1(self):
-        while self.elevatorEncoder.getPosition() < constants.kL1RotationDistance:
-            self.elevatorMotor.set(constants.kL1RotationSpeed)
-        self.elevatorMotor.set(0.0)
+        while self.elevatorEncoder2.getPosition() < constants.kL1RotationDistance:
+            self.elevatorMotor1.set(-constants.kL1RotationSpeed)
+            self.elevatorMotor2.set(constants.kL1RotationSpeed)
+        self.elevatorMotor1.set(0.0)
+        self.elevatorMotor2.set(0.0)
     
-    def l2(self):
-        while self.elevatorEncoder.getPosition() < constants.kL2RotationDistance:
-            self.elevatorMotor.set(constants.kL2RotationSpeed)
-        self.elevatorMotor.set(0.0)
-    
-    def l3(self):
-        while self.elevatorEncoder.getPosition() < constants.kL3RotationDistance:
-            self.elevatorMotor.set(constants.kL3RotationSpeed)
-        self.elevatorMotor.set(0.0)
-
-    def l4(self):
-        while self.elevatorEncoder.getPosition() < constants.kL4RotationDistance:
-            self.elevatorMotor.set(constants.kL4RotationSpeed)
-        self.elevatorMotor.set(0.0)
-
     #try to calibrate so default pos is 0
     def defaultPos(self):
-        while self.elevatorEncoder.getPosition() > constants.kDefaultPosRotation:
-            self.elevatorMotor.set(constants.kDefaultPosSpeed)
-        self.elevatorMotor.set(0.0)
+        while self.elevatorEncoder2.getPosition() > constants.kDefaultPosRotation:
+            self.elevatorMotor1.set(-constants.kDefaultPosSpeed)
+            self.elevatorMotor2.set(constants.kDefaultPosSpeed)
+        self.elevatorMotor1.set(0.0)
+        self.elevatorMotor2.set(0.0)
 
     def stop(self):
-        self.elevatorMotor.set(0.0)
+        self.elevatorMotor1.set(0.0)
+        self.elevatorMotor2.set(0.0)
 
     #necessity of these 2?
     def periodic(self):
