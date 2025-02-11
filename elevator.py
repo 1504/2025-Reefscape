@@ -1,13 +1,13 @@
-#being worked on by emma, advik & chatur
-
-'''Import'''
 import wpilib
+from wpilib import TimedRobot, Joystick
+
 import math
 
 import rev
+from rev import SparkMax, SparkMaxConfig, SparkBase
 
 import commands2
-from commands2 import Subsystem
+from commands2 import Subsystem, Command
 
 import constants
 
@@ -16,7 +16,7 @@ class ElevatorSubsystem(Subsystem):
         super().__init__()
 
         #placeholder number
-        self.elevatorMotor = rev.CANSparkMax(0, rev.CANSparkMax.MotorType.kBrushless)
+        self.elevatorMotor: SparkMax = SparkMax(0, SparkMax.MotorType.kBrushless)
         self.elevatorEncoder = self.elevatorMotor.getEncoder()
 
     def l1(self):
@@ -33,12 +33,18 @@ class ElevatorSubsystem(Subsystem):
         while self.elevatorEncoder.getPosition() < constants.kL3RotationDistance:
             self.elevatorMotor.set(constants.kL3RotationSpeed)
         self.elevatorMotor.set(0.0)
-    
+
     def l4(self):
         while self.elevatorEncoder.getPosition() < constants.kL4RotationDistance:
             self.elevatorMotor.set(constants.kL4RotationSpeed)
         self.elevatorMotor.set(0.0)
-    
+
+    #try to calibrate so default pos is 0
+    def defaultPos(self):
+        while self.elevatorEncoder.getPosition() > constants.kDefaultPosRotation:
+            self.elevatorMotor.set(constants.kDefaultPosSpeed)
+        self.elevatorMotor.set(0.0)
+
     def stop(self):
         self.elevatorMotor.set(0.0)
 
@@ -55,15 +61,16 @@ class ElevatorCommand(Command):
         super().__init__()
 
         self.elevator_subsystem = elevator_subsystem
+        
     #stopped here
     def initialize(self):
-        self.elevator_subsystem.intake()
+        pass
 
     def execute(self):
         pass 
 
     def end(self, interrupted):
-        self.intake_subsystem.stop()
+        self.elevator_subsystem.stop()
 
     #necessity of these 2
     def periodic(self):
@@ -76,11 +83,11 @@ class ElevatorCommand(Command):
 class Robot(TimedRobot):
     def robotInit(self):
         self.joystick = Joystick(0)#placeholder
-        self.intake_subsystem = IntakeSubsystem()
-        self.intake_command = IntakeCommand(self.intake_subsystem)
+        self.elevator_subsystem = ElevatorSubsystem()
+        self.elevator_command = ElevatorCommand(self.elevator_subsystem)
 
     def teleopPeriodic(self):
         if self.joystick.getRawButton(1):#palceholder
-            self.intake_subsystem.intake()
+            self.elevator_subsystem.l1()
         else:
-            self.intake_subsystem.stop()
+            self.elevator_subsystem.stop()
