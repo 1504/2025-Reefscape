@@ -10,8 +10,8 @@ class IntakeSubsystem(Subsystem):
         super().__init__()
 
         #0 & 1 are placeholder numbers
-        self.leftMotor = rev.CANSparkMax(0, rev.CANSparkMax.MotorType.kBrushless)
-        self.rightMotor = rev.CANSparkMax(1, rev.CANSparkMax.MotorType.kBrushless)
+        self.leftMotor = rev.SparkMax(9, rev.SparkMax.MotorType.kBrushless)#inverted
+        self.rightMotor = rev.SparkMax(10, rev.SparkMax.MotorType.kBrushless)
         self.motors = wpilib.MotorControllerGroup(self.leftMotor, self.rightMotor)
 
     def intake(self):
@@ -31,10 +31,10 @@ class IntakeCommand(Command):
         self.intake_subsystem = intake_subsystem
 
     def initialize(self):
-        self.intake_subsystem.intake()
+        pass
 
     def execute(self):
-        pass 
+        self.intake_subsystem.intake()
 
     def end(self, interrupted):
         self.intake_subsystem.stop()
