@@ -10,14 +10,14 @@ class IntakeSubsystem(Subsystem):
         super().__init__()
 
         #0 & 1 are placeholder numbers
-        self.leftMotor = rev.SparkMax(9, rev.SparkMax.MotorType.kBrushless)#inverted
-        self.rightMotor = rev.SparkMax(10, rev.SparkMax.MotorType.kBrushless)
+        self.leftMotor = rev.SparkMax(11, rev.SparkMax.MotorType.kBrushless)
+        self.rightMotor = rev.SparkMax(12, rev.SparkMax.MotorType.kBrushless)#inverted
         self.motors = wpilib.MotorControllerGroup(self.leftMotor, self.rightMotor)
 
     def intake(self):
         #placeholder values
-        self.leftMotor.set(-1.0)
-        self.rightMotor.set(1.0)
+        self.leftMotor.set(0.2)
+        self.rightMotor.set(-0.2)
     
     def stop(self):
         self.leftMotor.set(0.0)

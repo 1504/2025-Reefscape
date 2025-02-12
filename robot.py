@@ -17,8 +17,8 @@ logging.basicConfig(level=logging.DEBUG)
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self) -> None:
         """Robot initialization function"""
-        self.driver_controller = commands2.button.CommandXboxController(constants.kDriverControllerPort)
-        self.gadget_controller = commands2.button.CommandXboxController(constants.kGadgetControllerPort)
+        self.driver_controller = commands2.button.CommandXboxController(0)
+        self.gadget_controller = commands2.button.CommandXboxController(1)
         self.swerve = drivesubsystem.DriveSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
 
@@ -27,10 +27,23 @@ class MyRobot(wpilib.TimedRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
-        self.gadget_controller.b().whileTrue(intake.IntakeCommand())
+        self.gadget_controller.b().whileTrue(intake.IntakeCommand(self.intake_subsystem))
          #b is placeholder
         #while self.gadget_controller.getBButton() == True:
             #self.intake_subsystem.intake
+    
+    def robotPeriodic(self) -> None:
+        """This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+        that you want ran during disabled, autonomous, teleoperated and test.
+
+        This runs after the mode specific periodic functions, but before LiveWindow and
+        SmartDashboard integrated updating."""
+
+        # Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+        # commands, running already-scheduled commands, removing finished or interrupted commands,
+        # and running subsystem periodic() methods.  This must be called from the robot's periodic
+        # block in order for anything in the Command-based framework to work.
+        commands2.CommandScheduler.getInstance().run()
     
     def autonomousInit(self) -> None:
         pass
