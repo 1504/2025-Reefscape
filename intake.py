@@ -19,19 +19,10 @@ class IntakeSubsystem(Subsystem):
         self.leftMotor.set(-1.0)
         self.rightMotor.set(1.0)
     
-    #outtake?
-    
     def stop(self):
         self.leftMotor.set(0.0)
         self.rightMotor.set(0.0)
 
-    #necessity of these 2?
-    def periodic(self):
-        # This method will be called once per scheduler run
-        pass
-    def simulationPeriodic(self):
-        # This method will be called once per scheduler run during simulation
-        pass
 
 class IntakeCommand(Command):
     def __init__(self, intake_subsystem):
@@ -48,22 +39,4 @@ class IntakeCommand(Command):
     def end(self, interrupted):
         self.intake_subsystem.stop()
 
-    #necessity of these 2
-    def periodic(self):
-        # This method will be called once per scheduler run
-        pass
-    def simulationPeriodic(self):
-        # This method will be called once per scheduler run during simulation
-        pass
-
-class Robot(TimedRobot):
-    def robotInit(self):
-        self.joystick = Joystick(0)#placeholder
-        self.intake_subsystem = IntakeSubsystem()
-        self.intake_command = IntakeCommand(self.intake_subsystem)
-
-    def teleopPeriodic(self):
-        if self.joystick.getRawButton(1):#palceholder
-            self.intake_subsystem.intake()
-        else:
-            self.intake_subsystem.stop()
+   
