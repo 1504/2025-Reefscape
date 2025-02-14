@@ -28,6 +28,10 @@ class ElevatorSubsystem(Subsystem):
         # self.elevatorMotor2.set(0.0)
         self.elevatorMotor1.set(-0.25)
         self.elevatorMotor2.set(-0.25)
+    def down(self):
+
+        self.elevatorMotor1.set(0.12)
+        self.elevatorMotor2.set(0.12)
 
     
     #try to calibrate so default pos is 0
@@ -42,7 +46,7 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorMotor1.set(0.0)
         self.elevatorMotor2.set(0.0)
 
-class ElevatorCommand(Command):
+class ElevatorUpCommand(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
 
@@ -54,6 +58,22 @@ class ElevatorCommand(Command):
 
     def execute(self):
         self.elevator_subsystem.up() 
+
+    def end(self, interrupted):
+        self.elevator_subsystem.stop()
+
+class ElevatorDownCommand(Command):
+    def __init__(self, elevator_subsystem):
+        super().__init__()
+
+        self.elevator_subsystem = elevator_subsystem
+        
+    #stopped here
+    def initialize(self):
+        pass
+
+    def execute(self):
+        self.elevator_subsystem.down() 
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
