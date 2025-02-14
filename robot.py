@@ -8,6 +8,7 @@ import drivesubsystem
 import commands2
 import elevator
 import constants
+import intake
 
 # To see messages from networktables, you must setup logging
 import logging
@@ -20,6 +21,11 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller = commands2.button.CommandXboxController(1)
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
+        """Robot initialization function"""
+        self.driver_controller = commands2.button.CommandXboxController(0)
+        self.gadget_controller = commands2.button.CommandXboxController(1)
+        self.swerve = drivesubsystem.DriveSubsystem()
+        self.intake_subsystem = intake.IntakeSubsystem()
 
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
@@ -28,6 +34,11 @@ class MyRobot(wpilib.TimedRobot):
 
         self.gadget_controller.a().whileTrue(elevator.ElevatorCommand(self.elevator_subsystem))
 
+        self.gadget_controller.b().whileTrue(intake.IntakeCommand(self.intake_subsystem))
+         #b is placeholder
+        #while self.gadget_controller.getBButton() == True:
+            #self.intake_subsystem.intake
+    
     def robotPeriodic(self) -> None:
         """This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
         that you want ran during disabled, autonomous, teleoperated and test.
@@ -57,8 +68,7 @@ class MyRobot(wpilib.TimedRobot):
     def teleopPeriodic(self) -> None:
         # Teleop periodic logic
         self.driveWithJoystick(True)
-        
-    
+
     def testPeriodic(self) -> None:
         pass
 
