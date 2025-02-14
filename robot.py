@@ -28,6 +28,9 @@ class MyRobot(wpilib.TimedRobot):
 
         self.gadget_controller.a().whileTrue(elevator.ElevatorCommand(self.elevator_subsystem))
     
+    def robotPeriodic(self):
+        commands2.CommandScheduler.getInstance().run()
+    
     def autonomousInit(self) -> None:
         pass
 
