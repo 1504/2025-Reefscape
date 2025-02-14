@@ -5,7 +5,8 @@ import wpimath.filter
 import wpimath.controller
 import navx
 import drivesubsystem
-
+import commands2
+import elevator
 import constants
 
 # To see messages from networktables, you must setup logging
@@ -15,14 +16,17 @@ logging.basicConfig(level=logging.DEBUG)
 
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self) -> None:
-        """Robot initialization function"""
-        self.driver_controller = wpilib.XboxController(constants.kDriverControllerPort)
+        self.driver_controller = commands2.button.CommandXboxController(0)
+        self.gadget_controller = commands2.button.CommandXboxController(1)
         self.swerve = drivesubsystem.DriveSubsystem()
+        self.elevator_subsystem = elevator.ElevatorSubsystem()
 
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
+
+        self.gadget_controller.a().whileTrue(elevator.ElevatorCommand(self.elevator_subsystem))
     
     def autonomousInit(self) -> None:
         pass

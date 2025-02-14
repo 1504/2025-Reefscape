@@ -17,36 +17,33 @@ class ElevatorSubsystem(Subsystem):
 
         #placeholder number
         self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#this one is inverted
-        self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)
+        self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)#bottom
         self.elevatorEncoder1 = self.elevatorMotor1.getEncoder()
         self.elevatorEncoder2 = self.elevatorMotor2.getEncoder()
 
-    def l1(self):
-        while self.elevatorEncoder2.getPosition() < constants.kL1RotationDistance:
-            self.elevatorMotor1.set(-constants.kL1RotationSpeed)
-            self.elevatorMotor2.set(constants.kL1RotationSpeed)
-        self.elevatorMotor1.set(0.0)
-        self.elevatorMotor2.set(0.0)
+    def up(self):
+        # emma's code commented out
+        # while self.elevatorEncoder2.getPosition() < constants.kL1RotationDistance:
+        #     # self.elevatorMotor1.set(-constants.kL1RotationSpeed)
+        #     self.elevatorMotor2.set(constants.kL1RotationSpeed)
+        # self.elevatorMotor1.set(0.0)
+        # self.elevatorMotor2.set(0.0)
+        self.elevatorMotor1.set(0.1)
+        self.elevatorMotor2.set(-0.1)
+        pass
+
     
     #try to calibrate so default pos is 0
     def defaultPos(self):
-        while self.elevatorEncoder2.getPosition() > constants.kDefaultPosRotation:
-            self.elevatorMotor1.set(-constants.kDefaultPosSpeed)
-            self.elevatorMotor2.set(constants.kDefaultPosSpeed)
+        #while self.elevatorEncoder2.getPosition() > constants.kDefaultPosRotation:
+           # self.elevatorMotor1.set(-constants.kDefaultPosSpeed)
+           # self.elevatorMotor2.set(constants.kDefaultPosSpeed)
         self.elevatorMotor1.set(0.0)
         self.elevatorMotor2.set(0.0)
 
     def stop(self):
         self.elevatorMotor1.set(0.0)
         self.elevatorMotor2.set(0.0)
-
-    #necessity of these 2?
-    def periodic(self):
-        # This method will be called once per scheduler run
-        pass
-    def simulationPeriodic(self):
-        # This method will be called once per scheduler run during simulation
-        pass
 
 class ElevatorCommand(Command):
     def __init__(self, elevator_subsystem):
@@ -59,27 +56,8 @@ class ElevatorCommand(Command):
         pass
 
     def execute(self):
+        self.elevator_subsystem.up()
         pass 
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
-
-    #necessity of these 2
-    def periodic(self):
-        # This method will be called once per scheduler run
-        pass
-    def simulationPeriodic(self):
-        # This method will be called once per scheduler run during simulation
-        pass
-
-class Robot(TimedRobot):
-    def robotInit(self):
-        self.joystick = Joystick(0)#placeholder
-        self.elevator_subsystem = ElevatorSubsystem()
-        self.elevator_command = ElevatorCommand(self.elevator_subsystem)
-
-    def teleopPeriodic(self):
-        if self.joystick.getRawButton(1):#palceholder
-            self.elevator_subsystem.l1()
-        else:
-            self.elevator_subsystem.stop()
