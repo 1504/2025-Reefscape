@@ -18,8 +18,6 @@ class ElevatorSubsystem(Subsystem):
         #placeholder number
         self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#this one is inverted
         self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)#bottom
-        self.elevatorEncoder1 = self.elevatorMotor1.getEncoder()
-        self.elevatorEncoder2 = self.elevatorMotor2.getEncoder()
 
     def up(self):
         # emma's code commented out
@@ -28,9 +26,8 @@ class ElevatorSubsystem(Subsystem):
         #     self.elevatorMotor2.set(constants.kL1RotationSpeed)
         # self.elevatorMotor1.set(0.0)
         # self.elevatorMotor2.set(0.0)
-        self.elevatorMotor1.set(0.1)
-        self.elevatorMotor2.set(-0.1)
-        pass
+        self.elevatorMotor1.set(-0.25)
+        self.elevatorMotor2.set(-0.25)
 
     
     #try to calibrate so default pos is 0
@@ -56,8 +53,7 @@ class ElevatorCommand(Command):
         pass
 
     def execute(self):
-        self.elevator_subsystem.up()
-        pass 
+        self.elevator_subsystem.up() 
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()

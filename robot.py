@@ -41,6 +41,9 @@ class MyRobot(wpilib.TimedRobot):
         # block in order for anything in the Command-based framework to work.
         commands2.CommandScheduler.getInstance().run()
     
+    def robotPeriodic(self):
+        commands2.CommandScheduler.getInstance().run()
+    
     def autonomousInit(self) -> None:
         pass
 
