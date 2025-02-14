@@ -27,6 +27,19 @@ class MyRobot(wpilib.TimedRobot):
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
         self.gadget_controller.a().whileTrue(elevator.ElevatorCommand(self.elevator_subsystem))
+
+    def robotPeriodic(self) -> None:
+        """This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+        that you want ran during disabled, autonomous, teleoperated and test.
+
+        This runs after the mode specific periodic functions, but before LiveWindow and
+        SmartDashboard integrated updating."""
+
+        # Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+        # commands, running already-scheduled commands, removing finished or interrupted commands,
+        # and running subsystem periodic() methods.  This must be called from the robot's periodic
+        # block in order for anything in the Command-based framework to work.
+        commands2.CommandScheduler.getInstance().run()
     
     def autonomousInit(self) -> None:
         pass
