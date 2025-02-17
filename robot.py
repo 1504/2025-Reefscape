@@ -8,6 +8,7 @@ import drivesubsystem
 import commands2
 import elevator
 import constants
+import intake
 
 # To see messages from networktables, you must setup logging
 import logging
@@ -20,6 +21,8 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller = commands2.button.CommandXboxController(1)
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
+        self.intake_subsystem = intake.IntakeSubsystem()
+        
 
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
@@ -28,6 +31,7 @@ class MyRobot(wpilib.TimedRobot):
 
         self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
         self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
+        self.gadget_controller.b().whileTrue(intake.IntakeCommand(self.intake_subsystem))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
