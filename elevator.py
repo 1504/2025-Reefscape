@@ -1,6 +1,8 @@
 import wpilib
 from wpilib import TimedRobot, Joystick
 
+from wpimath.controller import PIDController
+
 import math
 
 import rev
@@ -18,14 +20,21 @@ class ElevatorSubsystem(Subsystem):
         #placeholder number
         self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#this one is inverted
         self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)#bottom
+        self.elevatorEncoder1 = wpilib.Encoder(0, 1)
+        self.pid_controller1 = PIDController(p=0.1, i=0.01, d=0.001) # Initial gains
+        self.elevatorEncoder2 = wpilib.Encoder(0, 1)
+        self.pid_controller2 = PIDController(p=0.1, i=0.01, d=0.001) # Initial gains
+    
+    def set_setpointl1(self, setpointl1):
+        self.setpointl1 = 60 #placeholder value for l1 setpoint
+    
+    def l1(self):
+        current_position = self.elevatorEncoder1.get()
+        control_effort = self.pid_controller1.calculate(current_position, self.setpointl1)
+        self.elevatorMotor1.set(control_effort)
+        self.elevatorMotor2.set(control_effort)
 
     def up(self):
-        # emma's code commented out
-        # while self.elevatorEncoder2.getPosition() < constants.kL1RotationDistance:
-        #     # self.elevatorMotor1.set(-constants.kL1RotationSpeed)
-        #     self.elevatorMotor2.set(constants.kL1RotationSpeed)
-        # self.elevatorMotor1.set(0.0)
-        # self.elevatorMotor2.set(0.0)
         self.elevatorMotor1.set(-0.25)
         self.elevatorMotor2.set(-0.25)
     def down(self):
@@ -74,6 +83,23 @@ class ElevatorDownCommand(Command):
 
     def execute(self):
         self.elevator_subsystem.down() 
+
+    def end(self, interrupted):
+        self.elevator_subsystem.stop()
+
+class ElevatorL1Command(Command):
+    def __init__(self, elevator_subsystem):
+        super().__init__()
+
+        self.elevator_subsystem = elevator_subsystem
+
+        
+    #stopped here
+    def initialize(self):
+        pass
+
+    def execute(self):
+        self.elevator_subsystem.l1()
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
