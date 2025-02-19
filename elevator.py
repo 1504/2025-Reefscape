@@ -2,7 +2,6 @@ import wpilib
 from wpilib import TimedRobot, Joystick
 
 from wpimath.controller import PIDController
-
 import math
 
 import rev
@@ -18,19 +17,29 @@ class ElevatorSubsystem(Subsystem):
         super().__init__()
 
         #placeholder number
-        self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#this one is inverted
-        self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)#bottom
-        self.elevatorEncoder1 = wpilib.Encoder(0, 1)
-        self.pid_controller1 = PIDController(p=0.1, i=0.01, d=0.001) # Initial gains
-        self.elevatorEncoder2 = wpilib.Encoder(0, 1)
-        self.pid_controller2 = PIDController(p=0.1, i=0.01, d=0.001) # Initial gains
-    
+        self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#both are same orientation
+        self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)
+        self.elevatorEncoder1 = self.elevatorMotor1.getEncoder()
+        self.pidController1 = self.elevatorMotor1.getPIDController() 
+        self.elevatorEncoder2 = self.elevatorMotor2.getEncoder()
+        self.pidController2 = self.elevatorMotor2.getPIDController() 
+        
+        # Initial gains
+        self.pidController1.setP(0.1)
+        self.pidController1.setI(0.01)
+        self.pidController1.setD(0.001)
+
+        # Initial gains
+        self.pidController2.setP(0.1)
+        self.pidController2.setI(0.01)
+        self.pidController2.setD(0.001)
+
     def set_setpointl1(self, setpointl1):
         self.setpointl1 = 60 #placeholder value for l1 setpoint
     
     def l1(self):
         current_position = self.elevatorEncoder1.get()
-        control_effort = self.pid_controller1.calculate(current_position, self.setpointl1)
+        control_effort = self.pidController1.calculate(current_position, self.setpointl1)
         self.elevatorMotor1.set(control_effort)
         self.elevatorMotor2.set(control_effort)
 
