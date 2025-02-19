@@ -54,7 +54,7 @@ class ElevatorSubsystem(Subsystem):
     
     def l1(self):
         current_position = self.elevatorEncoder1.get()
-        control_effort = self.pidController1.calculate(current_position, 60)
+        control_effort = self.pidController1.calculate(current_position, 2)
         self.elevatorMotor1.set(control_effort)
         self.elevatorMotor2.set(control_effort)
 
