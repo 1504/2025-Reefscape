@@ -4,7 +4,7 @@ from wpilib import TimedRobot, Joystick
 import math
 
 import rev
-from rev import SparkMax
+from rev import SparkMax, SparkMaxConfig, SparkBase
 
 import commands2
 from commands2 import Subsystem, Command
@@ -15,27 +15,37 @@ class ElevatorSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
 
-        #placeholder number
+        #motor controllers
         self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#both are same orientation
         self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)
+        
+        #config variables
+        self.elevatorMotor1Config = SparkMaxConfig()
+        self.elevatorMotor2Config = SparkMaxConfig()
+
+        #encoders
         self.elevatorEncoder1 = self.elevatorMotor1.getEncoder()
-        self.pidController1 = self.elevatorMotor1.getClosedLoopController()
         self.elevatorEncoder2 = self.elevatorMotor2.getEncoder()
+
+        #pid controllers 
+        self.pidController1 = self.elevatorMotor1.getClosedLoopController()
         self.pidController2 = self.elevatorMotor1.getClosedLoopController()
+        self.elevatorMotor1Config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder)
+        self.elevatorMotor2Config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
         
         # Initial gains
-        self.pidController1.closedLoop.P(0.1)
-        self.pidController1.closedLoop.I(0.01)
-        self.pidController1.closedLoop.D(0.001)
-        #self.pidController1.closedLoop.velocityFF(0)
-        #self.pidController1.closedLoop.outputRange(0,0)
+        self.elevatorMotor1Config.closedLoop.P(0.1)
+        self.elevatorMotor1Config.closedLoop.I(0.01)
+        self.elevatorMotor1Config.closedLoop.D(0.001)
+        #self.elevatorMotor1Config.closedLoop.velocityFF(0)
+        #self.elevatorMotor1Config.closedLoop.outputRange(0,0)
 
         # Initial gains
-        self.pidController2.closedLoop.P(0.1)
-        self.pidController2.closedLoop.I(0.01)
-        self.pidController2.closedLoop.D(0.001)
-        #self.pidController2.closedLoop.velocityFF(0)
-        #self.pidController2.closedLoop.outputRange(0,0)
+        self.elevatorMotor2Config.closedLoop.P(0.1)
+        self.elevatorMotor2Config.closedLoop.I(0.01)
+        self.elevatorMotor2Config.closedLoop.D(0.001)
+        #self.elevatorMotor2Config.closedLoop.velocityFF(0)
+        #self.elevatorMotor2Config.closedLoop.outputRange(0,0)
 
     #fix this later lol
         
