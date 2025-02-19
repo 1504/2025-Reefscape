@@ -4,7 +4,7 @@ from wpilib import TimedRobot, Joystick
 import math
 
 import rev
-from rev import SparkMax, SparkMaxConfig, SparkBase, SparkPIDController
+from rev import SparkMax
 
 import commands2
 from commands2 import Subsystem, Command
@@ -19,19 +19,23 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#both are same orientation
         self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)
         self.elevatorEncoder1 = self.elevatorMotor1.getEncoder()
-        self.pidController1 = self.PIDController(.1, .01, .001)
+        self.pidController1 = self.elevatorMotor1.getClosedLoopController()
         self.elevatorEncoder2 = self.elevatorMotor2.getEncoder()
-        self.pidController2 = self.PIDController(.1, .01, .001) 
+        self.pidController2 = self.elevatorMotor1.getClosedLoopController()
         
         # Initial gains
-        self.pidController1.setP(0.1)
-        self.pidController1.setI(0.01)
-        self.pidController1.setD(0.001)
+        self.pidController1.closedLoop.P(0.1)
+        self.pidController1.closedLoop.I(0.01)
+        self.pidController1.closedLoop.D(0.001)
+        #self.pidController1.closedLoop.velocityFF(0)
+        #self.pidController1.closedLoop.outputRange(0,0)
 
         # Initial gains
-        self.pidController2.setP(0.1)
-        self.pidController2.setI(0.01)
-        self.pidController2.setD(0.001)
+        self.pidController2.closedLoop.P(0.1)
+        self.pidController2.closedLoop.I(0.01)
+        self.pidController2.closedLoop.D(0.001)
+        #self.pidController2.closedLoop.velocityFF(0)
+        #self.pidController2.closedLoop.outputRange(0,0)
 
     #fix this later lol
         
