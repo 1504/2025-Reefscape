@@ -44,6 +44,7 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorMotor2Config.closedLoop.P(0.1)
         self.elevatorMotor2Config.closedLoop.I(0.01)
         self.elevatorMotor2Config.closedLoop.D(0.001)
+        #DO WE NEED THESE:
         #self.elevatorMotor2Config.closedLoop.velocityFF(0)
         #self.elevatorMotor2Config.closedLoop.outputRange(0,0)
 
@@ -54,7 +55,7 @@ class ElevatorSubsystem(Subsystem):
     
     def l1(self):
         current_position = self.elevatorEncoder1.get()
-        control_effort = self.pidController1.calculate(current_position, 60)
+        control_effort = self.pidController1.calculate(current_position, 2)#temp number
         self.elevatorMotor1.set(control_effort)
         self.elevatorMotor2.set(control_effort)
 
