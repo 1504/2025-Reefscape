@@ -29,9 +29,11 @@ class MyRobot(wpilib.TimedRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
-        self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
-        self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
+        #self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
+        #self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
         self.gadget_controller.b().whileTrue(intake.IntakeCommand(self.intake_subsystem))
+        self.gadget_controller.x().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
+        self.gadget_controller.a().whileTrue(intake.ReleaseCoralCommand(self.intake_subsystem))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
