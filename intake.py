@@ -26,8 +26,8 @@ class IntakeSubsystem(Subsystem):
         self.leftMotor.set(0.0)
         self.rightMotor.set(0.0)
     
-    def getCoralSensorInput(self):
-        self.coralSensor.get()#true when & false when?
+    #def getCoralSensorInput(self):
+        #self.coralSensor.get()#true when & false when?
     
     def primeCoral(self):
         #coral goes in
