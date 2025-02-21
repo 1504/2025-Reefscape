@@ -44,6 +44,7 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorMotor2Config.closedLoop.P(0.1)
         self.elevatorMotor2Config.closedLoop.I(0.01)
         self.elevatorMotor2Config.closedLoop.D(0.001)
+        #DO WE NEED THESE:
         #self.elevatorMotor2Config.closedLoop.velocityFF(0)
         #self.elevatorMotor2Config.closedLoop.outputRange(0,0)
 
