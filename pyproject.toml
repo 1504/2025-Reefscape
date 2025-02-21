@@ -6,7 +6,7 @@
 [tool.robotpy]
 
 # Version of robotpy this project depends on
-robotpy_version = "2025.2.1.0"
+robotpy_version = "2025.3.1.1"
 
 
 # Which extra RobotPy components should be installed
@@ -16,12 +16,12 @@ robotpy_extras = [
     # "apriltag"
     # "commands2"
     # "cscore"
-    "navx",
+    # "navx"
     # "pathplannerlib"
     # "phoenix5"
     # "phoenix6"
     # "playingwithfusion"
-    "rev"
+    # "rev"
     # "romi"
     # "sim"
     # "xrp"
