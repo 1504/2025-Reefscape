@@ -13,6 +13,11 @@ import constants
 import swerveutils
 # import networklogger
 
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.controller import PPHolonomicDriveController
+from pathplannerlib.config import RobotConfig, PIDConstants
+from wpilib import DriverStation
+
 class DriveSubsystem:
     """
     Represents a swerve drive style drivetrain.
@@ -77,6 +82,28 @@ class DriveSubsystem:
 
         # logger object for sending data to smart dashboard
         # self.logger = networklogger.NetworkLogger()
+        
+        # Load the RobotConfig from the GUI settings. You should probably
+        # store this in your Constants file
+        config = RobotConfig.fromGUISettings()
+
+        # Configure the AutoBuilder last
+        AutoBuilder.configure(
+            self.getPose, # Robot pose supplier
+            self.resetOdometry, # Method to reset odometry (will be called if your auto has a starting pose)
+            self.getRobotRelativeSpeeds, # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            lambda speeds, feedforwards: self.drive(speeds), # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also outputs individual module feedforwards
+            PPHolonomicDriveController( # PPHolonomicController is the built in path following controller for holonomic drive trains
+                PIDConstants(5.0, 0.0, 0.0), # Translation PID constants
+                PIDConstants(5.0, 0.0, 0.0) # Rotation PID constants
+            ),
+            config, # The robot configuration
+            self.shouldFlipPath, # Supplier to control path flipping based on alliance color
+            self # Reference to this subsystem to set requirements
+        )
+
+
+
 
 
 
@@ -211,3 +238,11 @@ class DriveSubsystem:
     # Resets the odometry to the specified pose
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
         self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
+    
+#please add getRobotRelativeSpeeds method plsplsplsplsplspls
+
+    def shouldFlipPath():
+        # Boolean supplier that controls when the path will be mirrored for the red alliance
+        # This will flip the path being followed to the red side of the field.
+        # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        return DriverStation.getAlliance() == DriverStation.Alliance.kRed
