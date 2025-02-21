@@ -1,3 +1,4 @@
+#please add getRobotRelativeSpeeds method plsplsplsplsplspls
 import math
 
 import wpilib
@@ -16,6 +17,8 @@ import swerveutils
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.config import RobotConfig, PIDConstants
+from pathplannerlib.path import PathPlannerPath
+from pathplannerlib.commands import FollowPathCommand
 from wpilib import DriverStation
 
 class DriveSubsystem:
@@ -239,10 +242,30 @@ class DriveSubsystem:
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
         self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
     
-#please add getRobotRelativeSpeeds method plsplsplsplsplspls
+    from pathplannerlib.path import PathPlannerPath
+from pathplannerlib.commands import FollowPathCommand
+from pathplannerlib.controller import PPHolonomicDriveController
 
-    def shouldFlipPath():
-        # Boolean supplier that controls when the path will be mirrored for the red alliance
-        # This will flip the path being followed to the red side of the field.
-        # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-        return DriverStation.getAlliance() == DriverStation.Alliance.kRed
+# Assuming this is a method in your drive subsystem
+def followPathCommand(self, pathName: str):
+    path = PathPlannerPath.fromPathFile(pathName)
+
+    return FollowPathCommand(
+        path,
+        self.getPose, # Robot pose supplier
+        self.getRobotRelativeSpeeds, # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        self.driveRobotRelative, # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds, AND feedforwards
+        PPHolonomicDriveController( # PPHolonomicController is the built in path following controller for holonomic drive trains
+            PIDConstants(5.0, 0.0, 0.0), # Translation PID constants
+            PIDConstants(5.0, 0.0, 0.0) # Rotation PID constants
+        ),
+        constants.robotConfig, # The robot configuration
+        self.shouldFlipPath, # Supplier to control path flipping based on alliance color
+        self # Reference to this subsystem to set requirements
+    )
+
+def shouldFlipPath(self):
+    # Boolean supplier that controls when the path will be mirrored for the red alliance
+    # This will flip the path being followed to the red side of the field.
+    # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+    return DriverStation.getAlliance() == DriverStation.Alliance.kRed
