@@ -14,14 +14,14 @@ robotpy_version = "2025.3.1.1"
 robotpy_extras = [
     # "all"
     # "apriltag"
-    # "commands2"
+    "commands2",
     # "cscore"
-    # "navx"
+    "navx",
     # "pathplannerlib"
     # "phoenix5"
     # "phoenix6"
     # "playingwithfusion"
-    # "rev"
+    "rev",
     # "romi"
     # "sim"
     # "xrp"
