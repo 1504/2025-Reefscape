@@ -29,19 +29,19 @@ class ElevatorSubsystem(Subsystem):
 
         #pid controllers 
         self.pidController1 = self.elevatorMotor1.getClosedLoopController()
-        self.pidController2 = self.elevatorMotor1.getClosedLoopController()
+        self.pidController2 = self.elevatorMotor2.getClosedLoopController()
         self.elevatorMotor1Config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder)
         self.elevatorMotor2Config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
         
         # Initial gains
-        self.elevatorMotor1Config.closedLoop.P(0.1)
+        self.elevatorMotor1Config.closedLoop.P(5)
         self.elevatorMotor1Config.closedLoop.I(0.01)
         self.elevatorMotor1Config.closedLoop.D(0.001)
         #self.elevatorMotor1Config.closedLoop.velocityFF(0)
         #self.elevatorMotor1Config.closedLoop.outputRange(0,0)
 
         # Initial gains
-        self.elevatorMotor2Config.closedLoop.P(0.1)
+        self.elevatorMotor2Config.closedLoop.P(5)
         self.elevatorMotor2Config.closedLoop.I(0.01)
         self.elevatorMotor2Config.closedLoop.D(0.001)
         #self.elevatorMotor2Config.closedLoop.velocityFF(0)
@@ -49,14 +49,20 @@ class ElevatorSubsystem(Subsystem):
 
     #fix this later lol
         
-    #def set_setpointl1(self, setpointl1):
-        #self.setpointl1 = 60 #placeholder value for l1 setpoint
+    def set_setpointl1(self, setpointl1):
+        self.setpointl1 = setpointl1
     
     def l1(self):
-        current_position = self.elevatorEncoder1.get()
-        control_effort = self.pidController1.calculate(current_position, 2)
-        self.elevatorMotor1.set(control_effort)
-        self.elevatorMotor2.set(control_effort)
+        #current_position = self.elevatorEncoder1.getPosition()
+        #control_effort = self.pidController1.setReference(current_position, -10)
+        #self.elevatorMotor1.set(control_effort)
+        #self.elevatorMotor2.set(control_effort)
+        #self.setpointl1 = -10
+        self.pidController1.setReference(-11, rev.SparkMax.ControlType.kPosition)
+        self.pidController2.setReference(-11, rev.SparkMax.ControlType.kPosition)
+        #self.pidController2.setReference(self.setpointl1, rev.SparkMax.ControlType.kPosition)
+        print(self.elevatorEncoder1.getPosition())
+        print(self.elevatorEncoder1.getPosition())
 
     def up(self):
         self.elevatorMotor1.set(-0.25)
