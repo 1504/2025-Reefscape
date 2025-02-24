@@ -1,6 +1,8 @@
 import wpilib
 import wpimath
 import wpilib.drive
+import wpimath.geometry
+from wpimath.geometry import Pose2d
 import wpimath.filter
 import wpimath.controller
 import navx
@@ -9,8 +11,7 @@ import commands2
 import elevator
 import constants
 import intake
-
-from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.auto import PathPlannerAuto, NamedCommands
 
 # To see messages from networktables, you must setup logging
 import logging
@@ -24,8 +25,11 @@ class MyRobot(wpilib.TimedRobot):
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
-        
 
+        # Register Named Commands
+        NamedCommands.registerCommand('elevatorUp', elevator.ElevatorUpCommand(self.elevator_subsystem))
+        NamedCommands.registerCommand('intake', intake.IntakeCommand(self.intake_subsystem))
+        
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
@@ -34,18 +38,6 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
         self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
         self.gadget_controller.b().whileTrue(intake.IntakeCommand(self.intake_subsystem))
-
-        # Build an auto chooser. This will use Commands.none() as the default option.
-        self.autoChooser = AutoBuilder.buildAutoChooser()
-
-        # Another option that allows you to specify the default auto by its name
-        # self.autoChooser = AutoBuilder.buildAutoChooser("My Default Auto")
-
-        SmartDashboard.putData("Auto Chooser", self.autoChooser)
-        #help
-    
-    def getAutonomousCommand(self):
-        return self.autoChooser.getSelected()
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
@@ -101,6 +93,10 @@ class MyRobot(wpilib.TimedRobot):
 
 
         self.swerve.drive(x_speed, y_speed, rot, field_relative, rate_limit=True)
+
+    def getAutonomousCommand(self):
+        return PathPlannerAuto('Example Auto')
+        
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
