@@ -18,7 +18,9 @@ class ElevatorSubsystem(Subsystem):
         #motor controllers
         self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#both are same orientation
         self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)
-        
+        self.elevatorMotor1.setInverted(True)
+        self.elevatorMotor2.setInverted(True)
+
         #config variables
         self.elevatorMotor1Config = SparkMaxConfig()
         self.elevatorMotor2Config = SparkMaxConfig()
@@ -34,18 +36,18 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorMotor2Config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
         
         # Initial gains
-        self.elevatorMotor1Config.closedLoop.P(5)
-        self.elevatorMotor1Config.closedLoop.I(0.01)
-        self.elevatorMotor1Config.closedLoop.D(0.001)
-        #self.elevatorMotor1Config.closedLoop.velocityFF(0)
-        #self.elevatorMotor1Config.closedLoop.outputRange(0,0)
+        self.elevatorMotor1Config.closedLoop.P(100)
+        self.elevatorMotor1Config.closedLoop.I(0.1)
+        self.elevatorMotor1Config.closedLoop.D(0.0)
+        self.elevatorMotor1Config.closedLoop.velocityFF(0)
+        self.elevatorMotor1Config.closedLoop.outputRange(0,0)
 
         # Initial gains
-        self.elevatorMotor2Config.closedLoop.P(5)
-        self.elevatorMotor2Config.closedLoop.I(0.01)
-        self.elevatorMotor2Config.closedLoop.D(0.001)
-        #self.elevatorMotor2Config.closedLoop.velocityFF(0)
-        #self.elevatorMotor2Config.closedLoop.outputRange(0,0)
+        self.elevatorMotor2Config.closedLoop.P(100)
+        self.elevatorMotor2Config.closedLoop.I(0.1)
+        self.elevatorMotor2Config.closedLoop.D(0.0)
+        self.elevatorMotor2Config.closedLoop.velocityFF(0)
+        self.elevatorMotor2Config.closedLoop.outputRange(0,0)
 
     #fix this later lol
         
@@ -58,19 +60,24 @@ class ElevatorSubsystem(Subsystem):
         #self.elevatorMotor1.set(control_effort)
         #self.elevatorMotor2.set(control_effort)
         #self.setpointl1 = -10
-        self.pidController1.setReference(-11, rev.SparkMax.ControlType.kPosition)
-        self.pidController2.setReference(-11, rev.SparkMax.ControlType.kPosition)
+
+        #self.elevatorMotor1Config.closedLoop.P(self.kP)
+        #self.elevatorMotor2Config.closedLoop.P(self.kP)
+
+        self.pidController1.setReference(20, rev.SparkMax.ControlType.kPosition)
+        self.pidController2.setReference(20, rev.SparkMax.ControlType.kPosition)
         #self.pidController2.setReference(self.setpointl1, rev.SparkMax.ControlType.kPosition)
         print(self.elevatorEncoder1.getPosition())
-        print(self.elevatorEncoder1.getPosition())
+        print(self.elevatorEncoder2.getPosition())
+
 
     def up(self):
-        self.elevatorMotor1.set(-0.25)
-        self.elevatorMotor2.set(-0.25)
+        self.elevatorMotor1.set(0.10)
+        self.elevatorMotor2.set(0.10)
     def down(self):
 
-        self.elevatorMotor1.set(0.12)
-        self.elevatorMotor2.set(0.12)
+        self.elevatorMotor1.set(-0.1)
+        self.elevatorMotor2.set(-0.1)
 
     
     #try to calibrate so default pos is 0

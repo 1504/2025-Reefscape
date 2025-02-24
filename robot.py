@@ -32,6 +32,9 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
         self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
         self.gadget_controller.b().whileTrue(elevator.ElevatorL1Command(self.elevator_subsystem))
+
+        self.kP = .1
+        wpilib.SmartDashboard.putNumber("P Gain", self.kP)
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
