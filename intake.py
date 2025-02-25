@@ -30,14 +30,14 @@ class IntakeSubsystem(Subsystem):
         self.rightMotorConfig.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
         
         # Initial gains
-        self.leftMotorConfig.closedLoop.P(0.1)
+        self.leftMotorConfig.closedLoop.P(10)
         self.leftMotorConfig.closedLoop.I(0.01)
         self.leftMotorConfig.closedLoop.D(0.001)
         #self.leftMotorConfig.closedLoop.velocityFF(0)
         #self.leftMotorConfig.closedLoop.outputRange(0,0)
 
         # Initial gains
-        self.rightMotorConfig.closedLoop.P(0.1)
+        self.rightMotorConfig.closedLoop.P(10)
         self.rightMotorConfig.closedLoop.I(0.01)
         self.rightMotorConfig.closedLoop.D(0.001)
         #self.rightMotorConfig.closedLoop.velocityFF(0)
@@ -55,6 +55,8 @@ class IntakeSubsystem(Subsystem):
     def stop(self):
         self.rightMotor.set(0)
         self.leftMotor.set(0)
+        self.intakeEncoder1.setPosition(0)
+        self.intakeEncoder2.setPosition(0)
 
 
 class IntakeCommand(Command):
