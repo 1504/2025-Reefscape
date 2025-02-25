@@ -63,7 +63,7 @@ class ElevatorSubsystem(Subsystem):
         #self.pidController1.setReference(self.setpointl1, rev.ControlType.kPosition)
         #self.pidController2.setReference(self.setpointl1, rev.ControlType.kPosition)
     
-    def l1(self):
+    def l2(self):
         #current_position = self.elevatorEncoder1.getPosition()
         #control_effort = self.pidController1.setReference(current_position, -10)
         #self.elevatorMotor1.set(control_effort)
@@ -74,8 +74,8 @@ class ElevatorSubsystem(Subsystem):
         #self.elevatorMotor2Config.closedLoop.P(self.kP)
         
         #self.pidController1.setReference(10, rev.SparkMax.ControlType.kPosition)
-        self.elevatorMotor1.set(-1*self.pidController1.calculate(10, self.elevatorEncoder1.getPosition()))
-        self.elevatorMotor2.set(-1*self.pidController1.calculate(10, self.elevatorEncoder1.getPosition()))
+        self.elevatorMotor1.set(-1*self.pidController1.calculate(7.5, self.elevatorEncoder1.getPosition()))
+        self.elevatorMotor2.set(-1*self.pidController1.calculate(7.5, self.elevatorEncoder1.getPosition()))
         #self.pidController2.setReference(10, rev.SparkMax.ControlType.kPosition)
         #self.pidController2.setReference(self.setpointl1, rev.SparkMax.ControlType.kPosition)
         #print("Position")
@@ -84,6 +84,14 @@ class ElevatorSubsystem(Subsystem):
         #print(self.elevatorMotor1.getBusVoltage())
         #print("Calculated")
         #print(self.pidController1.calculate(10, self.elevatorEncoder1.getPosition()))
+    
+    def l3(self):
+        self.elevatorMotor1.set(-1*self.pidController1.calculate(14.5, self.elevatorEncoder1.getPosition()))
+        self.elevatorMotor2.set(-1*self.pidController1.calculate(14.5, self.elevatorEncoder1.getPosition()))
+
+    def l4(self):
+        self.elevatorMotor1.set(-1*self.pidController1.calculate(27.5, self.elevatorEncoder1.getPosition()))
+        self.elevatorMotor2.set(-1*self.pidController1.calculate(27.5, self.elevatorEncoder1.getPosition()))
 
 
     def printHeight(self):
@@ -91,9 +99,9 @@ class ElevatorSubsystem(Subsystem):
 
 
 
-    def up(self):
-        self.elevatorMotor1.set(0.1)
-        self.elevatorMotor2.set(0.1)
+    # def up(self):
+    #     self.elevatorMotor1.set(0.1)
+    #     self.elevatorMotor2.set(0.1)
     def down(self):
 
         self.elevatorMotor1.set(-0.1)
@@ -114,21 +122,21 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorMotor1.set(0.0)
         self.elevatorMotor2.set(0.0)
 
-class ElevatorUpCommand(Command):
-    def __init__(self, elevator_subsystem):
-        super().__init__()
+# class ElevatorUpCommand(Command):
+#     def __init__(self, elevator_subsystem):
+#         super().__init__()
 
-        self.elevator_subsystem = elevator_subsystem
+#         self.elevator_subsystem = elevator_subsystem
         
-    #stopped here
-    def initialize(self):
-        pass
+#     #stopped here
+#     def initialize(self):
+#         pass
 
-    def execute(self):
-        self.elevator_subsystem.up() 
+#     def execute(self):
+#         self.elevator_subsystem.up() 
 
-    def end(self, interrupted):
-        self.elevator_subsystem.stop()
+#     def end(self, interrupted):
+#         self.elevator_subsystem.stop()
 
 class ElevatorDownCommand(Command):
     def __init__(self, elevator_subsystem):
@@ -146,7 +154,7 @@ class ElevatorDownCommand(Command):
     def end(self, interrupted):
         self.elevator_subsystem.stop()
 
-class ElevatorL1Command(Command):
+class ElevatorL2Command(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
 
@@ -158,12 +166,12 @@ class ElevatorL1Command(Command):
         pass
 
     def execute(self):
-        self.elevator_subsystem.l1()
+        self.elevator_subsystem.l2()
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
 
-class printHeightCommand(Command):
+class ElevatorL3Command(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
 
@@ -175,7 +183,41 @@ class printHeightCommand(Command):
         pass
 
     def execute(self):
-        self.elevator_subsystem.printHeight()
+        self.elevator_subsystem.l3()
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
+
+class ElevatorL4Command(Command):
+    def __init__(self, elevator_subsystem):
+        super().__init__()
+
+        self.elevator_subsystem = elevator_subsystem
+
+        
+    #stopped here
+    def initialize(self):
+        pass
+
+    def execute(self):
+        self.elevator_subsystem.l4()
+
+    def end(self, interrupted):
+        self.elevator_subsystem.stop()
+
+# class printHeightCommand(Command):
+#     def __init__(self, elevator_subsystem):
+#         super().__init__()
+
+#         self.elevator_subsystem = elevator_subsystem
+
+        
+#     #stopped here
+#     def initialize(self):
+#         pass
+
+#     def execute(self):
+#         self.elevator_subsystem.printHeight()
+
+#     def end(self, interrupted):
+#         self.elevator_subsystem.stop()
