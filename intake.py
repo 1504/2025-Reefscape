@@ -13,7 +13,7 @@ class IntakeSubsystem(Subsystem):
         self.leftMotor = rev.SparkMax(12, rev.SparkMax.MotorType.kBrushless)
         self.rightMotor = rev.SparkMax(11, rev.SparkMax.MotorType.kBrushless)#inverted
         self.placeholderNumber = 0 #Replace with actual number
-        self.coralSensor = DigitalInput(self.placeHoldernumber)
+        self.coralSensor = DigitalInput(9)
         #conveyorDetector.whileActiveContinuous(new RunMotor());
         self.motors = wpilib.MotorControllerGroup(self.leftMotor, self.rightMotor)
 
