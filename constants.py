@@ -106,5 +106,7 @@ kDriverControllerPort = 0
 kGadgetControllerPort = 1
 kDriveDeadband = 0.08
 
+""" Elevator Constants """
+kL1RotationDistance = 1.0 #unit is # rotations of the motor
 
 

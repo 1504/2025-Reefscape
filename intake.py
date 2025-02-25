@@ -2,8 +2,10 @@ import rev
 import wpilib
 from wpilib import TimedRobot, Joystick, DigitalInput
 import commands2
-from commands2 import Command
-from commands2 import Subsystem
+from commands2 import Subsystem, Command
+from rev import SparkMax, SparkMaxConfig, SparkBase
+import math
+import constants
 
 class IntakeSubsystem(Subsystem):
     def __init__(self):
@@ -18,9 +20,13 @@ class IntakeSubsystem(Subsystem):
         self.motors = wpilib.MotorControllerGroup(self.leftMotor, self.rightMotor)
 
     def intake(self):
+        current_position = self.intakeEncoder1.get()
+        control_effort = self.pidCE1.setReference(current_position, 1)
+        self.leftMotor.set(control_effort)
+        self.rightMotor.set(control_effort)
         #placeholder values
-        self.leftMotor.set(0.8)
-        self.rightMotor.set(-0.8)
+        #self.leftMotor.set(0.8)
+        #self.rightMotor.set(-0.8)
     
     def stop(self):
         self.leftMotor.set(0.0)

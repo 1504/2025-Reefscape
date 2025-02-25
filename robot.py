@@ -37,6 +37,7 @@ class MyRobot(wpilib.TimedRobot):
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
+        commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
     
     def autonomousInit(self) -> None:
         pass
