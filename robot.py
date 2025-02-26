@@ -29,11 +29,19 @@ class MyRobot(wpilib.TimedRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
-        #self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
-        #self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
+        # this is the mapping for intake system
         self.gadget_controller.b().whileTrue(intake.IntakeCommand(self.intake_subsystem))
         self.gadget_controller.x().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
         self.gadget_controller.a().whileTrue(intake.ReleaseCoralCommand(self.intake_subsystem))
+
+        # this is the mapping for the elevator functions, currently using the triggers and bumper button
+        # this mapping is slightly different than proposed, making room for all 4 levels without using the d pad
+        self.gadget_controller.leftBumper().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
+        self.gadget_controller.leftTrigger().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
+        self.gadget_controller.rightBumper().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
+        self.gadget_controller.rightTrigger().whileTrue(elevator.ElevatorL5Command(self.elevator_subsystem))
+
+        self.gadget_controller.y().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
