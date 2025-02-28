@@ -10,6 +10,9 @@ import elevator
 import constants
 import intake
 
+from wpilib import SmartDashboard
+from wpilib import CameraServer
+
 # To see messages from networktables, you must setup logging
 import logging
 
@@ -34,6 +37,10 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.b().whileTrue(intake.IntakeCommand(self.intake_subsystem))
         self.gadget_controller.x().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
         self.gadget_controller.a().whileTrue(intake.ReleaseCoralCommand(self.intake_subsystem))
+
+        # Start the camera stream from the Limelight
+        self.limelight_stream = CameraServer.getInstance().startAutomaticCapture("limelight", "http://roboRIO-1504.local:5800")
+
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
