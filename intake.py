@@ -13,20 +13,20 @@ class IntakeSubsystem(Subsystem):
 
         #0 & 1 are placeholder numbers
         self.leftMotor = rev.SparkMax(12, rev.SparkMax.MotorType.kBrushless)
-        self.rightMotor = rev.SparkMax(11, rev.SparkMax.MotorType.kBrushless)#inverted
-        self.placeholderNumber = 0 #Replace with actual number
+        self.rightMotor = rev.SparkMax(11, rev.SparkMax.MotorType.kBrushless)
+        #self.placeholderNumber = 0 #Replace with actual number
         self.coralSensor = DigitalInput(9)
         #conveyorDetector.whileActiveContinuous(new RunMotor());
-        self.motors = wpilib.MotorControllerGroup(self.leftMotor, self.rightMotor)
+        #self.motors = wpilib.MotorControllerGroup(self.leftMotor, self.rightMotor)
 
     def intake(self):
-        current_position = self.intakeEncoder1.get()
-        control_effort = self.pidCE1.setReference(current_position, 1)
-        self.leftMotor.set(control_effort)
-        self.rightMotor.set(control_effort)
+        #current_position = self.intakeEncoder1.get()
+        #control_effort = self.pidCE1.setReference(current_position, 1)
+        #self.leftMotor.set(control_effort)
+        #self.rightMotor.set(control_effort)
         #placeholder values
-        #self.leftMotor.set(0.8)
-        #self.rightMotor.set(-0.8)
+        self.leftMotor.set(0.8)
+        self.rightMotor.set(-0.8)
     
     def stop(self):
         self.leftMotor.set(0.0)
@@ -36,16 +36,17 @@ class IntakeSubsystem(Subsystem):
         #self.coralSensor.get()#true when & false when?
     
     def primeCoral(self):
-        #coral goes in
-        #sensor senses coral
+        self.leftMotor.set(.5)
+        self.rightMotor.set(-.5)
+        self.i = 0
         if self.coralSensor.get():
-            self.leftMotor.set(0.8)
-            self.rightMotor.set(-0.8)
-        while self.coralSensor.get():
-            pass
-        else:#sensor stops sensing coral
+            self.leftMotor.set(.5)
+            self.rightMotor.set(-.5)
+            i = 1
+        if self.coralSensor.get() == False and i == 1:
             self.leftMotor.set(0.0)
             self.rightMotor.set(0.0)
+            i = 0
         #motors stop
     
     def releaseCoral(self):

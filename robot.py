@@ -9,6 +9,7 @@ import commands2
 import elevator
 import constants
 import intake
+from wpilib import Timer
 
 # To see messages from networktables, you must setup logging
 import logging
@@ -22,6 +23,8 @@ class MyRobot(wpilib.TimedRobot):
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
+
+        #CameraServer.startAutomaticCapture("frontcam",0)
         
 
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -29,21 +32,25 @@ class MyRobot(wpilib.TimedRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
-        #self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
-        #self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
-        self.gadget_controller.b().whileTrue(intake.IntakeCommand(self.intake_subsystem))
-        self.gadget_controller.x().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
-        self.gadget_controller.a().whileTrue(intake.ReleaseCoralCommand(self.intake_subsystem))
+        self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
+        self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
+        self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
+        self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
+        self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
+        self.gadget_controller.rightBumper().whileTrue(intake.ReleaseCoralCommand(self.intake_subsystem))
+        self.gadget_controller.leftTrigger().whileTrue(intake.IntakeCommand(self.intake_subsystem))
+        self.gadget_controller.rightTrigger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
         commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
+        commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
     
     def autonomousInit(self) -> None:
         pass
 
     def autonomousPeriodic(self) -> None:
-        pass
+        self.swerve.drive(1, 0, 0, True, True)
 
     def teleopInit(self) -> None:
         pass
