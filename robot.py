@@ -31,20 +31,21 @@ class MyRobot(wpilib.TimedRobot):
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
-        self.driver_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
+        
         self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
         self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
         self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
         self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
-        self.gadget_controller.leftBumper().whileTrue(intake.BackCoralCommand(self.intake_subsystem))
-        #self.gadget_controller.leftBumper().onTrue(intake.PrimeCoralCommand(self.intake_subsystem))
-        self.gadget_controller.rightBumper().whileTrue(intake.ReleaseCoralCommand(self.intake_subsystem))#slow corla
-    
-        self.gadget_controller.rightTrigger().whileTrue(intake.IntakeCommand(self.intake_subsystem))#fast coral
-        # #self.gadget_controller.rightTrigger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
+        self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
+        self.gadget_controller.leftTrigger().whileTrue(intake.BackCoralCommand(self.intake_subsystem))
+        self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
+        self.gadget_controller.rightTrigger().whileTrue(intake.fastForwardCoralCommand(self.intake_subsystem))#fast coral
+
+        # #self.gadget_controller.rightTri
+        # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
 
         self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
-        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
+        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
@@ -52,16 +53,10 @@ class MyRobot(wpilib.TimedRobot):
         commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
     
     def autonomousInit(self) -> None:
-        pass
+        commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
+        
 
-    def autonomousPeriodic(self) -> None:
-        # timer = wpilib.Timer()
-        # timer.start()
-        # while timer.get() < 10.0:
-        #     self.swerve.drive(1, 0, 0, True, True)
-        # self.swerve.drive(1, 0, 0, True, True)  
-        # timer.stop()
-        # timer.reset()
+    def autonomousPeriodic(self) -> None: 
         pass
 
     def teleopInit(self) -> None:

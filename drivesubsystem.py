@@ -11,6 +11,8 @@ import navx
 import swervemodule
 import constants
 import swerveutils
+
+from commands2 import Command
 # import networklogger
 
 class DriveSubsystem:

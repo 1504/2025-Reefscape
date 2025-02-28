@@ -22,7 +22,7 @@ class IntakeSubsystem(Subsystem):
         #conveyorDetector.whileActiveContinuous(new RunMotor());
         #self.motors = wpilib.MotorControllerGroup(self.leftMotor, self.rightMotor)
 
-    def intake(self):
+    def fastForwardCoral(self):
         #current_position = self.intakeEncoder1.get()
         #control_effort = self.pidCE1.setReference(current_position, 1)
         #self.leftMotor.set(control_effort)
@@ -69,13 +69,13 @@ class IntakeSubsystem(Subsystem):
         return False
     
     
-    def releaseCoral(self):
+    def slowForwardCoral(self):
         #button press and go
         self.leftMotor.set(-0.2)
         self.rightMotor.set(0.2)
 
 
-class IntakeCommand(Command):
+class fastForwardCoralCommand(Command):
     def __init__(self, intake_subsystem):
         super().__init__()
 
@@ -85,7 +85,7 @@ class IntakeCommand(Command):
         pass
 
     def execute(self):
-        self.intake_subsystem.intake()
+        self.intake_subsystem.fastForwardCoral()
 
     def end(self, interrupted):
         self.intake_subsystem.stop()
@@ -109,7 +109,7 @@ class PrimeCoralCommand(Command):
     def end(self, interrupted):
         self.intake_subsystem.stop()
 
-class ReleaseCoralCommand(Command):
+class slowForwardCoralCommand(Command):
     def __init__(self, intake_subsystem):
         super().__init__()
 
@@ -119,7 +119,7 @@ class ReleaseCoralCommand(Command):
         pass
 
     def execute(self):
-        self.intake_subsystem.releaseCoral()
+        self.intake_subsystem.slowForwardCoral()
 
     def end(self, interrupted):
         self.intake_subsystem.stop()
