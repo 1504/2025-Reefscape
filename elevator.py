@@ -74,8 +74,8 @@ class ElevatorSubsystem(Subsystem):
         #self.elevatorMotor2Config.closedLoop.P(self.kP)
         
         #self.pidController1.setReference(10, rev.SparkMax.ControlType.kPosition)
-        self.elevatorMotor1.set((-1*self.pidController1.calculate(7.6, self.elevatorEncoder1.getPosition())))
-        self.elevatorMotor2.set((-1*self.pidController1.calculate(7.6, self.elevatorEncoder1.getPosition())))
+        self.elevatorMotor1.set((-1*self.pidController1.calculate(7.6, self.elevatorEncoder1.getPosition()))*0.3)
+        self.elevatorMotor2.set((-1*self.pidController1.calculate(7.6, self.elevatorEncoder1.getPosition()))*0.3)
         #self.pidController2.setReference(10, rev.SparkMax.ControlType.kPosition)
         #self.pidController2.setReference(self.setpointl1, rev.SparkMax.ControlType.kPosition)
         #print("Position")
@@ -86,21 +86,20 @@ class ElevatorSubsystem(Subsystem):
         #print(self.pidController1.calculate(10, self.elevatorEncoder1.getPosition()))
     
     def l3(self):
-        self.elevatorMotor1.set((-1*self.pidController1.calculate(16.3, self.elevatorEncoder1.getPosition()))*0.8)
-        self.elevatorMotor2.set((-1*self.pidController1.calculate(16.3, self.elevatorEncoder1.getPosition()))*0.8)
+        self.elevatorMotor1.set((-1*self.pidController1.calculate(16.3, self.elevatorEncoder1.getPosition()))*0.3)
+        self.elevatorMotor2.set((-1*self.pidController1.calculate(16.3, self.elevatorEncoder1.getPosition()))*0.3)
 
     def l4(self):
-        self.elevatorMotor1.set((-1*self.pidController1.calculate(31.5, self.elevatorEncoder1.getPosition()))*0.5)
-        self.elevatorMotor2.set((-1*self.pidController1.calculate(31.5, self.elevatorEncoder1.getPosition()))*0.5)
+        self.elevatorMotor1.set((-1*self.pidController1.calculate(31.5, self.elevatorEncoder1.getPosition()))*0.3)
+        self.elevatorMotor2.set((-1*self.pidController1.calculate(31.5, self.elevatorEncoder1.getPosition()))*0.3)
 
     def printHeight(self):
         print(self.elevatorEncoder1.getPosition())
-
-
-
-    # def up(self):
-    #     self.elevatorMotor1.set(0.1)
-    #     self.elevatorMotor2.set(0.1)
+    
+    
+    def up(self):
+         self.elevatorMotor1.set(0.1)
+         self.elevatorMotor2.set(0.1)
     def down(self):
 
         self.elevatorMotor1.set(-0.1)
@@ -200,6 +199,23 @@ class ElevatorL4Command(Command):
 
     def execute(self):
         self.elevator_subsystem.l4()
+
+    def end(self, interrupted):
+        self.elevator_subsystem.stop()
+
+class UpCommand(Command):
+    def __init__(self, elevator_subsystem):
+        super().__init__()
+
+        self.elevator_subsystem = elevator_subsystem
+
+        
+    #stopped here
+    def initialize(self):
+        pass
+
+    def execute(self):
+        self.elevator_subsystem.up()
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
