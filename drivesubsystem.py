@@ -6,9 +6,9 @@ import wpimath.units
 import ntcore
 import navx
 
-import swerve.swervemodule as swervemodule
+import swervemodule
 import constants
-import swerve.swerveutils as swerveutils
+import swerveutils
 
 # from commands2 import Command
 # import wpilib

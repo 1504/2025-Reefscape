@@ -4,11 +4,11 @@ import wpilib.drive
 import wpimath.filter
 import wpimath.controller
 import navx
-import subsystems.drivesubsystem as drivesubsystem
+import drivesubsystem
 import commands2
-import subsystems.elevator as elevator
+import elevator
 import constants
-import subsystems.intake as intake
+import intake
 from wpilib import Timer
 
 # To see messages from networktables, you must setup logging
@@ -60,6 +60,7 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopInit(self) -> None:
         pass
+    
 
     def teleopPeriodic(self) -> None:
         # Teleop periodic logic
