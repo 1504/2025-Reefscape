@@ -24,28 +24,26 @@ class MyRobot(wpilib.TimedRobot):
         self.elevator_subsystem = elevator.ElevatorSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
 
-        #CameraServer.startAutomaticCapture("frontcam",0)
-        
-
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
         
-        self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
-        self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
-        self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
-        self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
-        self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
-        self.gadget_controller.leftTrigger().whileTrue(intake.BackCoralCommand(self.intake_subsystem))
-        self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
-        self.gadget_controller.rightTrigger().whileTrue(intake.fastForwardCoralCommand(self.intake_subsystem))#fast coral
+        #elevator
+        self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem)) #south
+        self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem)) #east
+        self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem)) #west
+        self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem)) #north
+        
+        #intake 
+        self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem)) #priming, fix
+        self.gadget_controller.leftTrigger().whileTrue(intake.BackCoralCommand(self.intake_subsystem)) # adjustment backwards
+        self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow coral score
+        self.gadget_controller.rightTrigger().whileTrue(intake.fastForwardCoralCommand(self.intake_subsystem))#fast coral score
 
-        # #self.gadget_controller.rightTri
-        # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
-
-        self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
-        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
+        #for small asjustments - temporary solution for the levels, hopefullly we can score by just holding the l# buttons.
+        self.gadget_controller.povUp().whileTrue(elevator.ElevatorUpAdjustmentCommand(self.elevator_subsystem))
+        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownAdjustmentCommand(self.elevator_subsystem))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
@@ -53,6 +51,7 @@ class MyRobot(wpilib.TimedRobot):
         commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
     
     def autonomousInit(self) -> None:
+        #temporary soloution to auton, fix on monday
         commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
         
 
@@ -70,6 +69,9 @@ class MyRobot(wpilib.TimedRobot):
     
     def testPeriodic(self) -> None:
         pass
+
+
+    
 
     def driveWithJoystick(self, field_relative: bool) -> None:
         # Get the x speed. We are inverting this because Xbox controllers return
