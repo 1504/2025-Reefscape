@@ -1,4 +1,6 @@
 import math
+
+import wpilib
 import wpimath.geometry
 import wpimath.kinematics
 import wpimath.filter
@@ -10,9 +12,8 @@ import swervemodule
 import constants
 import swerveutils
 
-# from commands2 import Command
-# import wpilib
-#import networklogger
+from commands2 import Command
+# import networklogger
 
 class DriveSubsystem:
     """

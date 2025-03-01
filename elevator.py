@@ -1,11 +1,15 @@
 import wpilib
 from wpilib import TimedRobot, Joystick
+
 from wpimath.controller import PIDController
 import math
+
 import rev
 from rev import SparkMax, SparkMaxConfig, SparkBase
+
 import commands2
 from commands2 import Subsystem, Command
+
 import constants
 
 class ElevatorSubsystem(Subsystem):
@@ -31,22 +35,55 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorEncoder2.setPosition(0)
 
         #pid controllers 
+        #self.pidController1 = self.elevatorMotor1.getClosedLoopController()
+        #self.pidController2 = self.elevatorMotor2.getClosedLoopController()
+        #self.elevatorMotor1Config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
+        #self.elevatorMotor2Config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
         self.pidController1 = PIDController(0.04,0.0, 0.001)#.02 , 004 / .04, 0, 0
         self.pidController2 = PIDController(0.04,0.0, 0.001)
 
-    
-    
-    #elevator levels, main stuff
-     
-    def down(self):
-    #just down, faster than down adj, acts like l1, no pid
-        self.elevatorMotor1.set(-0.15)
-        self.elevatorMotor2.set(-0.15)
+        # Initial gains
+        #self.elevatorMotor1Config.closedLoop.P(.1)
+        #self.elevatorMotor1Config.closedLoop.I(0)
+        #self.elevatorMotor1Config.closedLoop.D(0)
+        #self.elevatorMotor1Config.closedLoop.velocityFF(0.1)
+        #self.elevatorMotor1Config.closedLoop.outputRange(-1,1)#what does this do diego
+
+        # Initial gains
+        #self.elevatorMotor2Config.closedLoop.P(.1)
+        #self.elevatorMotor2Config.closedLoop.I(0)
+        #self.elevatorMotor2Config.closedLoop.D(0)
+        #self.elevatorMotor2Config.closedLoop.velocityFF(0.1)
+        #self.elevatorMotor2Config.closedLoop.outputRange(-1,1)
+
+    #fix this later lol
+        
+    #def set_setpointl1(self):#, setpointl1):
+        #self.setpointl1 = setpointl1
+        #self.pidController1.setReference(self.setpointl1, rev.ControlType.kPosition)
+        #self.pidController2.setReference(self.setpointl1, rev.ControlType.kPosition)
     
     def l2(self):
+        #current_position = self.elevatorEncoder1.getPosition()
+        #control_effort = self.pidController1.setReference(current_position, -10)
+        #self.elevatorMotor1.set(control_effort)
+        #self.elevatorMotor2.set(control_effort)
+        #self.setpointl1 = -10
+
+        #self.elevatorMotor1Config.closedLoop.P(self.kP)
+        #self.elevatorMotor2Config.closedLoop.P(self.kP)
+        
+        #self.pidController1.setReference(10, rev.SparkMax.ControlType.kPosition)
         self.elevatorMotor1.set((-1*self.pidController1.calculate(7.6, self.elevatorEncoder1.getPosition()))*0.5)
         self.elevatorMotor2.set((-1*self.pidController1.calculate(7.6, self.elevatorEncoder1.getPosition()))*0.5)
+        #self.pidController2.setReference(10, rev.SparkMax.ControlType.kPosition)
+        #self.pidController2.setReference(self.setpointl1, rev.SparkMax.ControlType.kPosition)
+        #print("Position")
         print(self.elevatorEncoder1.getPosition())
+        #print(self.elevatorEncoder2.getPosition())
+        #print(self.elevatorMotor1.getBusVoltage())
+        #print("Calculated")
+        #print(self.pidController1.calculate(10, self.elevatorEncoder1.getPosition()))
     
     def l3(self):
         self.elevatorMotor1.set((-1*self.pidController1.calculate(16.3, self.elevatorEncoder1.getPosition()))*0.5)
@@ -56,39 +93,65 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorMotor1.set((-1*self.pidController1.calculate(31.5, self.elevatorEncoder1.getPosition()))*0.5)
         self.elevatorMotor2.set((-1*self.pidController1.calculate(31.5, self.elevatorEncoder1.getPosition()))*0.5)
 
- 
-    #elevator adjustments - for adjusting, temporary solution for the levels, hopefullly we can score by just holding the l# buttons.
-    def upAdjustment(self):
+    def printHeight(self):
+        print(self.elevatorEncoder1.getPosition())
+    
+    
+    def up(self):
          self.elevatorMotor1.set(0.05)
          self.elevatorMotor2.set(0.05)
+    def downManual(self):
 
-    def downAdjustment(self):
         self.elevatorMotor1.set(-0.05)
         self.elevatorMotor2.set(-0.05)
-   
+    def down(self):
 
-    #try to calibrate so default pos is 0 ---- done.
+        self.elevatorMotor1.set(-0.15)
+        self.elevatorMotor2.set(-0.15)
+
+    
+    #try to calibrate so default pos is 0
     def defaultPos(self):
+        #while self.elevatorEncoder2.getPosition() > constants.kDefaultPosRotation:
+           # self.elevatorMotor1.set(-constants.kDefaultPosSpeed)
+           # self.elevatorMotor2.set(constants.kDefaultPosSpeed)
         self.elevatorEncoder1.setPosition(0)
         self.elevatorEncoder2.setPosition(0)
+        # self.elevatorMotor1.set(0.0)
+        # self.elevatorMotor2.set(0.0)
 
     def stop(self):
         self.elevatorMotor1.set(0.0)
         self.elevatorMotor2.set(0.0)
 
-    def printHeight(self):
-        print(self.elevatorEncoder1.getPosition())
+# class ElevatorUpCommand(Command):
+#     def __init__(self, elevator_subsystem):
+#         super().__init__()
 
+#         self.elevator_subsystem = elevator_subsystem
+        
+#     #stopped here
+#     def initialize(self):
+#         pass
 
-#commands
-class ElevatorDownAdjustmentCommand(Command):
+#     def execute(self):
+#         self.elevator_subsystem.up() 
+
+#     def end(self, interrupted):
+#         self.elevator_subsystem.stop()
+
+class ElevatorDownManualCommand(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
+
         self.elevator_subsystem = elevator_subsystem
+        
+    #stopped here
     def initialize(self):
         pass
+
     def execute(self):
-        self.elevator_subsystem.downAdjustment() 
+        self.elevator_subsystem.downManual() 
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
@@ -96,21 +159,31 @@ class ElevatorDownAdjustmentCommand(Command):
 class ElevatorDownCommand(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
+
         self.elevator_subsystem = elevator_subsystem
+        
+    #stopped here
     def initialize(self):
         pass
+
     def execute(self):
         self.elevator_subsystem.down() 
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
 
+
 class ElevatorL2Command(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
+
         self.elevator_subsystem = elevator_subsystem
+
+        
+    #stopped here
     def initialize(self):
         pass
+
     def execute(self):
         self.elevator_subsystem.l2()
 
@@ -120,9 +193,14 @@ class ElevatorL2Command(Command):
 class ElevatorL3Command(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
+
         self.elevator_subsystem = elevator_subsystem
+
+        
+    #stopped here
     def initialize(self):
         pass
+
     def execute(self):
         self.elevator_subsystem.l3()
 
@@ -132,24 +210,33 @@ class ElevatorL3Command(Command):
 class ElevatorL4Command(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
-        self.elevator_subsystem = elevator_subsystem        
+
+        self.elevator_subsystem = elevator_subsystem
+
+        
+    #stopped here
     def initialize(self):
         pass
+
     def execute(self):
         self.elevator_subsystem.l4()
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
 
-class ElevatorUpAdjustmentCommand(Command):
+class UpCommand(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
+
         self.elevator_subsystem = elevator_subsystem
+
+        
     #stopped here
     def initialize(self):
         pass
+
     def execute(self):
-        self.elevator_subsystem.upAdjustment()
+        self.elevator_subsystem.up()
 
     def end(self, interrupted):
         self.elevator_subsystem.stop()
@@ -157,9 +244,14 @@ class ElevatorUpAdjustmentCommand(Command):
 class printHeightCommand(Command):
     def __init__(self, elevator_subsystem):
         super().__init__()
+
         self.elevator_subsystem = elevator_subsystem
+
+        
+     #stopped here
     def initialize(self):
         pass
+
     def execute(self):
         self.elevator_subsystem.printHeight()
 
