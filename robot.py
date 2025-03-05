@@ -33,7 +33,7 @@ class MyRobot(wpilib.TimedRobot):
 
         #self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
         #self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
-        self.driver_controller.leftBumper().whileTrue(drivesubsystem.TurnToObjectCommand())
+        self.driver_controller.leftBumper().whileTrue(drivesubsystem.TurnToObjectCommand(self.swerve, self.camera))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
