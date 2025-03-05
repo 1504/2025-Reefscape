@@ -39,7 +39,8 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.leftBumper().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
         self.gadget_controller.leftTrigger().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
         self.gadget_controller.rightBumper().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
-        self.gadget_controller.rightTrigger().whileTrue(elevator.ElevatorL5Command(self.elevator_subsystem))
+        self.gadget_controller.rightTrigger().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
+        self.gadget_controller.rightStick().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
 
         self.gadget_controller.y().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
     
