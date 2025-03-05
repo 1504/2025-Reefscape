@@ -7,6 +7,7 @@ import navx
 import drivesubsystem
 import commands2
 import elevator
+import limelightCamera
 import constants
 import intake
 
@@ -22,6 +23,7 @@ class MyRobot(wpilib.TimedRobot):
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
+        self.camera = limelightCamera.LimelightCamera()
         
 
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -31,9 +33,7 @@ class MyRobot(wpilib.TimedRobot):
 
         #self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
         #self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
-        self.gadget_controller.b().whileTrue(intake.IntakeCommand(self.intake_subsystem))
-        self.gadget_controller.x().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
-        self.gadget_controller.a().whileTrue(intake.ReleaseCoralCommand(self.intake_subsystem))
+        self.driver_controller.leftBumper().whileTrue(drivesubsystem.TurnToObjectCommand())
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
@@ -56,6 +56,9 @@ class MyRobot(wpilib.TimedRobot):
     
     def testPeriodic(self) -> None:
         pass
+
+
+
 
     def driveWithJoystick(self, field_relative: bool) -> None:
         # Get the x speed. We are inverting this because Xbox controllers return

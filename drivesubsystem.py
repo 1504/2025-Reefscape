@@ -13,7 +13,10 @@ import constants
 import swerveutils
 # import networklogger
 
-class DriveSubsystem:
+import commands2
+from commands2 import Subsystem, Command
+
+class DriveSubsystem(Subsystem):
     """
     Represents a swerve drive style drivetrain.
     """
@@ -208,6 +211,27 @@ class DriveSubsystem:
     def getPose(self) -> wpimath.geometry.Pose2d:
         return self.odometry.getPose()
     
+    def turn_to_object(self):
+        x = self.camera.getX()
+        print(f"x={x}")
+        turn_speed = -0.005 * x
+        self.swerve.drive(0,0,turn_speed,True,rate_limit=True)
+    
     # Resets the odometry to the specified pose
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
         self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
+class TurnToObjectCommand(Command):
+    def __init__(self, swerve):
+        super().__init__()
+
+        self.swerve = DriveSubsystem
+        
+    #stopped here
+    def initialize(self):
+        pass
+
+    def execute(self):
+        self.turn_to_object()
+
+    def end(self, interrupted):
+        self.swerve.drive(self,0,0,0,True,True)
