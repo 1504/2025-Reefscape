@@ -19,6 +19,7 @@ from pathplannerlib.config import RobotConfig, PIDConstants
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.commands import FollowPathCommand
 
+
 from wpilib import DriverStation
 
 class DriveSubsystem:
@@ -243,7 +244,9 @@ class DriveSubsystem:
         self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
 
     def getRobotRelativeSpeeds(self):
-       pass
+        return wpimath.kinematics.ChassisSpeeds.fromFieldRelativeSpeeds(
+            self.front_left.get_state(self), self.rear_left.get_state(self), self.front_right.get_state(self), self.rear_right.get_state(self))
+
 
     def shouldFlipPath(self):
         # Boolean supplier that controls when the path will be mirrored for the red alliance
