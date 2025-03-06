@@ -220,11 +220,13 @@ class DriveSubsystem(Subsystem):
     # Resets the odometry to the specified pose
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
         self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
+
+
 class TurnToObjectCommand(Command):
-    def __init__(self, swerve):
+    def __init__(self, DriveSubsystem):
         super().__init__()
 
-        self.swerve = DriveSubsystem
+        self.DriveSubsystem = DriveSubsystem
         
     #stopped here
     def initialize(self):
