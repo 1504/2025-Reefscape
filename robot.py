@@ -31,14 +31,9 @@ class MyRobot(wpilib.TimedRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
-        #self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
-        #self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
-        self.driver_controller.leftBumper().whileTrue(drivesubsystem.TurnToObjectCommand(self.swerve))
-
+        self.driver_controller.leftBumper().whileTrue(commands2.InstantCommand(lambda: self.swerve.drive(0,0,self.camera.getX()* -0.005,False, rate_limit=True)))
+        self.driver_controller.leftBumber().onFalse(commands2.InstantCommand(lambda: self.swerve.drive(0, 0, 0, False, False)))
        
-        #self.driver_controller.leftBumper().whileTrue(commands2.RunCommand(turn_to_object, self.robotDrive))
-        #self.driver_controller.leftBumper().onFalse(commands2.InstantCommand(lambda: self.robotDrive.drive(0, 0, 0, False, False)))
-    
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
         commands2.CommandScheduler.registerSubsystem(self.swerve)
@@ -55,20 +50,18 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self) -> None:
         # Teleop periodic logic
-        self.driveWithJoystick(True)
-        
-    def turn_to_object(self):
-            x = self.camera.getX()
-            print(f"x={x}")
-            turn_speed = -0.005 * x
-            self.swerve.rotate(turn_speed)
-            # if you want your robot to slowly chase that object... replace this line above with: self.robotDrive.arcadeDrive(0.1, turn_speed)
+        # we don't want the robot to accidently drive during this testing.
+        # self.driveWithJoystick(True)
+        pass
 
     def testPeriodic(self) -> None:
         pass
 
-
-    
+    def turn_to_object(self) -> None:
+        x = self.camera.getX()
+        print(f"x={x}")
+        turn_speed = -0.005 * x
+        self.swerve.drive(0,0,turn_speed,True,rate_limit=True)
 
     def driveWithJoystick(self, field_relative: bool) -> None:
         # Get the x speed. We are inverting this because Xbox controllers return
