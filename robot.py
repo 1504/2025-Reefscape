@@ -32,7 +32,7 @@ class MyRobot(wpilib.TimedRobot):
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
         self.driver_controller.leftBumper().whileTrue(commands2.InstantCommand(lambda: self.swerve.drive(0,0,self.camera.getX()* -0.005,False, rate_limit=True)))
-        self.driver_controller.leftBumber().onFalse(commands2.InstantCommand(lambda: self.swerve.drive(0, 0, 0, False, False)))
+        self.driver_controller.leftBumper().onFalse(commands2.InstantCommand(lambda: self.swerve.drive(0, 0, 0, False, False)))
        
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
