@@ -33,11 +33,15 @@ class MyRobot(wpilib.TimedRobot):
 
         #self.gadget_controller.a().whileTrue(elevator.ElevatorUpCommand(self.elevator_subsystem))
         #self.gadget_controller.x().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
-        self.driver_controller.leftBumper().whileTrue(drivesubsystem.TurnToObjectCommand(self.swerve))
+        #self.driver_controller.leftBumper().whileTrue(drivesubsystem.TurnToObjectCommand(self.swerve))
+
+       
+        self.driver_controller.leftBumper().whileTrue(commands2.RunCommand(turn_to_object, self.robotDrive))
+        self.driver_controller.leftBumper().onFalse(commands2.InstantCommand(lambda: self.robotDrive.drive(0, 0, 0, False, False)))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
+        commands2.CommandScheduler.registerSubsystem(self.swerve)
     
     def autonomousInit(self) -> None:
         pass
@@ -53,12 +57,18 @@ class MyRobot(wpilib.TimedRobot):
         # Teleop periodic logic
         self.driveWithJoystick(True)
         
-    
+    def turn_to_object(self):
+            x = self.camera.getX()
+            print(f"x={x}")
+            turn_speed = -0.005 * x
+            self.swerve.rotate(turn_speed)
+            # if you want your robot to slowly chase that object... replace this line above with: self.robotDrive.arcadeDrive(0.1, turn_speed)
+
     def testPeriodic(self) -> None:
         pass
 
 
-
+    
 
     def driveWithJoystick(self, field_relative: bool) -> None:
         # Get the x speed. We are inverting this because Xbox controllers return
