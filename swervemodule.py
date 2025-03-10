@@ -52,7 +52,7 @@ class SwerveModule:
         # Invert the turning encoder, since the output shaft rotates in the opposite
         # direction of the steering motor in the MAXSwerve Module.
         # self.turningEncoder.setInverted(constants.kTurningEncoderInverted)
-        # se-\lf.turning_config.encoder(constants.kTurningEncoderInverted)
+        # self.turning_config.encoder(constants.kTurningEncoderInverted)
         self.turning_config.absoluteEncoder.inverted(constants.kTurningEncoderInverted)
 
         """ Initialize PID Controllers"""
