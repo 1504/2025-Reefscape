@@ -15,7 +15,7 @@ import swerveutils
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.config import RobotConfig, PIDConstants
-from wpilib import DriverStation
+#from wpilib import DriverStation
 
 from commands2 import Command
 # import networklogger
@@ -56,6 +56,8 @@ class DriveSubsystem:
             constants.kRearRightChassisAngularOffset,
             constants.kRearRightAbsoluteEncoderOffset
         )
+
+        self.swerve_modules = [self.front_left, self.rear_left, self.front_right, self.rear_right]
 
         # the gyro sensor
         self.gyro = navx.AHRS(navx.AHRS.NavXComType.kMXP_SPI)
@@ -110,16 +112,25 @@ class DriveSubsystem:
                 PIDConstants(5.0, 0.0, 0.0) # Rotation PID constants
             )
 
-        AutoBuilder.configure(
-                pose_supplier=self.getPose,
-                reset_pose=self.resetOdometry,
-                robot_relative_speeds_supplier=self.getRobotRelativeSpeeds,
-                output=self.driveRobotRelative, 
-                controller=holonomic_controller,
-                robot_config=robot_config,
-                should_flip_path=self.shouldFlipPath,
-                drive_subsystem=self
-        )
+        pose_supplier=self.getPose()
+        self.resetOdometry(pose_supplier) #needs parameters
+        #robot_relative_speeds_supplier=self.getRobotRelativeSpeeds()
+        # output=self.driveRobotRelative()
+        # controller=holonomic_controller
+        # robot_config=robot_config
+        # should_flip_path=self.shouldFlipPath()
+        # drive_subsystem=self
+        
+        # AutoBuilder.configure(
+        #         pose_supplier=self.getPose,
+        #         reset_pose=self.resetOdometry,
+        #         robot_relative_speeds_supplier=self.getRobotRelativeSpeeds,
+        #         output=self.driveRobotRelative, 
+        #         controller=holonomic_controller,
+        #         robot_config=robot_config,
+        #         should_flip_path=self.shouldFlipPath,
+        #         drive_subsystem=self
+        # )
 
         self.automated_path = None #is this necessary??
 
@@ -253,9 +264,14 @@ class DriveSubsystem:
     
     # Resets the odometry to the specified pose
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
-        self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
+        #self.odometry.resetPosition(self.getHeading(), self.get_module_positions(), pose)
+        self.odometry.resetPosition(50, (3,2,1,4), pose)
+        #self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
 
-    #EXTRA STUFF FOR PATHPLANNER
+    def get_module_positions(self):
+        return [m.get_position() for m in self.swerve_modules]
+    
+    # #EXTRA STUFF FOR PATHPLANNER
         
     def getRobotRelativeSpeeds(self):
         return wpimath.kinematics.ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -270,11 +286,11 @@ class DriveSubsystem:
         else:
             return True
     
-    #do we need a driveRobotRelative or do we already have that
+    # #do we need a driveRobotRelative or do we already have that
     def driveRobotRelative(self, chassis_speeds: wpimath.kinematics.ChassisSpeeds, feedforwards, desiredStates: tuple[wpimath.kinematics.SwerveModuleState]):
         # required for the pathplanner lib's pathfollowing based on chassis speeds
         # idk if we need the feedforwards
-        swerveModuleStates = self.kDriveKinematics.toSwerveModuleStates(chassis_speeds)
+        # swerveModuleStates = self.kDriveKinematics.toSwerveModuleStates(chassis_speeds)
         swerveModuleStates = wpimath.kinematics.SwerveDrive4Kinematics.desaturateWheelSpeeds(swerveModuleStates, constants.kMaxSpeed)
         #for state, module in zip(swerveModuleStates, self.swerve_modules):
             #module.set_desired_state(state)
