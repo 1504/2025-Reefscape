@@ -31,12 +31,11 @@ class MyRobot(wpilib.TimedRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
-        self.driver_controller.a().whileTrue(commands2.InstantCommand(lambda: self.swerve.drive(0,0,self.camera.getX()* -0.005,False, rate_limit=True)))
-        self.driver_controller.a().onFalse(commands2.InstantCommand(lambda: self.swerve.drive(0, 0, 0, False, False)))
+        #self.driver_controller.a().whileTrue(commands2.InstantCommand(lambda: self.swerve.drive(0,0,self.camera.getX()* -0.005,False, rate_limit=True)))
+        #self.driver_controller.a().onFalse(commands2.InstantCommand(lambda: self.swerve.drive(0, 0, 0, False, False)))
        
     def robotPeriodic(self):
-        commands2.CommandScheduler.getInstance().run()
-        commands2.CommandScheduler.registerSubsystem(self.swerve)
+        print()
     
     def autonomousInit(self) -> None:
         pass
@@ -58,9 +57,9 @@ class MyRobot(wpilib.TimedRobot):
         pass
 
     def getXofObject(self) -> None:
-        x = self.camera.getX()
-        print(f"x={x}")
-        turn_speed = -0.005 * x
+        targetX = self.camera.getX()
+        print(targetX)
+        turn_speed = -0.005 * targetX
         self.swerve.drive(0,0,turn_speed,True,rate_limit=True)
 
     def driveWithJoystick(self, field_relative: bool) -> None:
