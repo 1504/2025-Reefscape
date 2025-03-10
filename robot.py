@@ -51,13 +51,13 @@ class MyRobot(wpilib.TimedRobot):
     def teleopPeriodic(self) -> None:
         # Teleop periodic logic
         # we don't want the robot to accidently drive during this testing.
-        # self.driveWithJoystick(True)
-        pass
+        self.getXofObject()
+
 
     def testPeriodic(self) -> None:
         pass
 
-    def turn_to_object(self) -> None:
+    def getXofObject(self) -> None:
         x = self.camera.getX()
         print(f"x={x}")
         turn_speed = -0.005 * x
