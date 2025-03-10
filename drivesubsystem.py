@@ -264,8 +264,8 @@ class DriveSubsystem:
     
     # Resets the odometry to the specified pose
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
-        #self.odometry.resetPosition(self.getHeading(), self.get_module_positions(), pose)
-        self.odometry.resetPosition(50, (3,2,1,4), pose)
+        self.odometry.resetPosition(self.getHeading(), self.get_module_positions(), pose)
+        #self.odometry.resetPosition(50, (3,2,1,4), pose)
         #self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
 
     def get_module_positions(self):
