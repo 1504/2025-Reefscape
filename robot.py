@@ -94,7 +94,7 @@ class MyRobot(wpilib.TimedRobot):
         self.autonomousCommand = self.getAutonomousCommand()
 
         if self.autonomousCommand:
-            self.autonomousCommand.schedule()
+            commands2.CommandScheduler.getInstance().schedule(self.autonomousCommand)
 
     def autonomousPeriodic(self) -> None: 
         pass
