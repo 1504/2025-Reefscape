@@ -7,7 +7,7 @@ import navx
 import time
 import drivesubsystem
 import commands2
-from commands2 import Command, PrintCommand
+from commands2 import Command
 import elevator
 import constants
 import intake
@@ -18,7 +18,6 @@ from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.config import RobotConfig, PIDConstants
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.commands import FollowPathCommand
-from robotcontainer import RobotContainer
 
 # To see messages from networktables, you must setup logging
 import logging
@@ -28,11 +27,11 @@ import typing
 logging.basicConfig(level=logging.DEBUG)
 
 class MyRobot(wpilib.TimedRobot):
-    autonomousCommand: typing.Optional[commands2.Command] = None
-
     def robotInit(self) -> None:
 
-        self.container = RobotContainer()
+        self.autonomousCommand: typing.Optional[commands2.Command] = None
+
+        self.start_time = time.time()
 
         self.driver_controller = commands2.button.CommandXboxController(0)
         self.gadget_controller = commands2.button.CommandXboxController(1)
@@ -63,26 +62,26 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
         self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
 
-        #MOVED TO ROBOT CONTAINER 
-
         #Register Named Commands################################
-        # NamedCommands.registerCommand('ElevatorL2Command', elevator.ElevatorL2Command(self.elevator_subsystem))
+        NamedCommands.registerCommand('ElevatorL2Command', elevator.ElevatorL2Command(self.elevator_subsystem))
         ##########################################################
         
-        #MOVED TO ROBOT CONTAINER
+        #Choosing an Autonomous Program########################
+        self.defaultAuto = "Default"
+        self.customAuto = "My Auto"
+        self.chooser = AutoBuilder.buildAutoChooser()
 
-        # #Choosing an Autonomous Program########################
-        # #Now, in autonomousInit and autonomousPeriodic, you can use the m_autoSelected variable to read which option was chosen, and change what happens during the autonomous period.
-        # self.auto_chooser = AutoBuilder.buildAutoChooser()
-        # self.auto_chooser.setDefaultOption('Wait', PrintCommand("** Running wait auto **").andThen(commands2.WaitCommand(15)))
-        # #self.auto_chooser.addOption('Drive by velocity leave', PrintCommand("** Running drive by velocity swerve leave auto **").andThen(DriveByVelocitySwerve(self, self.swerve, Pose2d(0.1, 0, 0), 2)))
-        # wpilib.SmartDashboard.putData('Auto choices', self.auto_chooser)
+        self.chooser.setDefaultOption("Default Auto", self.defaultAuto)
+        self.chooser.addOption("My Auto", self.customAuto)
+        SmartDashboard.putData("Auto choices", self.chooser)
+        #Now, in autonomousInit and autonomousPeriodic, you can use the m_autoSelected variable to read which option was chosen, and change what happens during the autonomous period.
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
         commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
         commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
     
+    ##################################################AUTON
     def autonomousInit(self) -> None:
         #commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
         #self.autoSelected = self.chooser.getSelected()
@@ -90,13 +89,12 @@ class MyRobot(wpilib.TimedRobot):
 
         #original: self.container.blah
 
-        self.container.set_start_time()  # putting this after the scheduler is bad
+        self.set_start_time()  # putting this after the scheduler is bad
 
-        self.autonomousCommand = self.container.get_autonomous_command()
+        self.autonomousCommand = self.getAutonomousCommand()
 
         if self.autonomousCommand:
-            commands2.CommandScheduler.getInstance().schedule(self.autonomousCommand)
-            #self.autonomousCommand.schedule()
+            self.autonomousCommand.schedule()
 
     def autonomousPeriodic(self) -> None: 
         pass
@@ -107,6 +105,7 @@ class MyRobot(wpilib.TimedRobot):
         #     case _:
         #         # Put default auto code here
         #         pass
+    ##################################################AUTON
 
     def teleopInit(self) -> None:
         # This makes sure that the autonomous stops running when
@@ -158,6 +157,13 @@ class MyRobot(wpilib.TimedRobot):
 
 
         self.swerve.drive(x_speed, y_speed, rot, field_relative, rate_limit=True)
+
+    #err stuff needed for auton pathplanner
+    def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
+        self.start_time = time.time()
+
+    def getAutonomousCommand(self):
+        return self.chooser.getSelected()
     
 if __name__ == "__main__":
     wpilib.run(MyRobot)
