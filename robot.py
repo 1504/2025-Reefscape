@@ -23,7 +23,7 @@ class MyRobot(wpilib.TimedRobot):
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
-        self.camera = limelightCamera.LimelightCamera("limelight")
+        self.camera = limelightCamera.LimelightCamera("Limelightt")
         
 
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
