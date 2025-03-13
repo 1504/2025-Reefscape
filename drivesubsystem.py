@@ -12,6 +12,8 @@ import swervemodule
 import constants
 import swerveutils
 
+from wpimath.geometry import Rotation2d
+
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.config import RobotConfig, PIDConstants
@@ -89,50 +91,27 @@ class DriveSubsystem:
 
         # Load the RobotConfig from the GUI settings. You should probably
         # store this in your Constants file
+        
         robot_config = RobotConfig.fromGUISettings()
-
-        # # Configure the AutoBuilder last
-
-        # AutoBuilder.configure(
-        #     self.getPose, # Robot pose supplier
-        #     self.resetOdometry, # Method to reset odometry (will be called if your auto has a starting pose)
-        #     self.getRobotRelativeSpeeds, # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        #     lambda speeds, feedforwards: self.drive(speeds), # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also outputs individual module feedforwards
-        #     PPHolonomicDriveController( # PPHolonomicController is the built in path following controller for holonomic drive trains
-        #         PIDConstants(5.0, 0.0, 0.0), # Translation PID constants
-        #         PIDConstants(5.0, 0.0, 0.0) # Rotation PID constants
-        #     ),
-        #     config, # The robot configuration
-        #     self.shouldFlipPath, # Supplier to control path flipping based on alliance color
-        #     self # Reference to this subsystem to set requirements
-        # )
 
         holonomic_controller = PPHolonomicDriveController( # PPHolonomicController is the built in path following controller for holonomic drive trains
                 PIDConstants(5.0, 0.0, 0.0), # Translation PID constants
                 PIDConstants(5.0, 0.0, 0.0) # Rotation PID constants
             )
 
-        pose_supplier=self.getPose()
-        self.resetOdometry(pose_supplier) #needs parameters
-        #robot_relative_speeds_supplier=self.getRobotRelativeSpeeds()
-        # output=self.driveRobotRelative()
-        # controller=holonomic_controller
-        # robot_config=robot_config
-        # should_flip_path=self.shouldFlipPath()
-        # drive_subsystem=self
         
-        # AutoBuilder.configure(
-        #         pose_supplier=self.getPose,
-        #         reset_pose=self.resetOdometry,
-        #         robot_relative_speeds_supplier=self.getRobotRelativeSpeeds,
-        #         output=self.driveRobotRelative, 
-        #         controller=holonomic_controller,
-        #         robot_config=robot_config,
-        #         should_flip_path=self.shouldFlipPath,
-        #         drive_subsystem=self
-        # )
+        AutoBuilder.configure(
+                pose_supplier=self.getPose,
+                reset_pose=self.resetOdometry,
+                robot_relative_speeds_supplier=self.getRobotRelativeSpeeds,
+                output=self.driveRobotRelative, 
+                controller=holonomic_controller,
+                robot_config=robot_config,
+                should_flip_path=self.shouldFlipPath,
+                drive_subsystem=self
+        )
 
-        self.automated_path = None #is this necessary??
+        #self.automated_path = None #is this necessary??
 
     def periodic(self):
         self.odometry.update(
@@ -264,18 +243,18 @@ class DriveSubsystem:
     
     # Resets the odometry to the specified pose
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
-        self.odometry.resetPosition(self.getHeading(), self.get_module_positions(), pose)
-        #self.odometry.resetPosition(50, (3,2,1,4), pose)
-        #self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
+        self.odometry.resetPosition(Rotation2d.fromDegrees(self.gyro.getAngle()), self.get_module_positions(), pose)
 
     def get_module_positions(self):
         return [m.get_position() for m in self.swerve_modules]
     
-    # #EXTRA STUFF FOR PATHPLANNER
+    def get_module_states(self):
+        return [m.get_state() for m in self.swerve_modules]
+    
+    # EXTRA STUFF FOR PATHPLANNER
         
     def getRobotRelativeSpeeds(self):
-        return wpimath.kinematics.ChassisSpeeds.fromFieldRelativeSpeeds(
-            self.front_left.get_state(self), self.rear_left.get_state(self), self.front_right.get_state(self), self.rear_right.get_state(self))
+        return self.kDriveKinematics.toChassisSpeeds(self.get_module_states())
 
     def shouldFlipPath():
         # Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -285,17 +264,7 @@ class DriveSubsystem:
             return False
         else:
             return True
-    
-    # #do we need a driveRobotRelative or do we already have that
-    def driveRobotRelative(self, chassis_speeds: wpimath.kinematics.ChassisSpeeds, feedforwards, desiredStates: tuple[wpimath.kinematics.SwerveModuleState]):
-        # required for the pathplanner lib's pathfollowing based on chassis speeds
-        # idk if we need the feedforwards
-        # swerveModuleStates = self.kDriveKinematics.toSwerveModuleStates(chassis_speeds)
+
+    def driveRobotRelative(self, chassis_speeds: wpimath.kinematics.ChassisSpeeds, feedforwards):
         swerveModuleStates = wpimath.kinematics.SwerveDrive4Kinematics.desaturateWheelSpeeds(swerveModuleStates, constants.kMaxSpeed)
-        #for state, module in zip(swerveModuleStates, self.swerve_modules):
-            #module.set_desired_state(state)
-        
-        self.front_left.set_desired_state(desiredStates[0])
-        self.front_right.set_desired_state(desiredStates[1])
-        self.rear_left.set_desired_state(desiredStates[2])
-        self.rear_right.set_desired_state(desiredStates[3])
+        self.setModuleStates(swerveModuleStates)
