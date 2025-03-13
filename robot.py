@@ -32,19 +32,19 @@ class MyRobot(wpilib.TimedRobot):
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
-        self.gadget_controller.povUp().whileTrue(algae.outwardClawCommand(self.algae_subsystem))
-        self.gadget_controller.povDown().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povDown().whileTrue(algae.outwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povUp().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povRight().whileTrue(algae.jointrotatecommand(self.algae_subsystem))
+
+    
 
         # #self.gadget_controller.rightTri
         # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
 
-        self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
-        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
-        commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
+
     
     def autonomousInit(self) -> None:
         commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))

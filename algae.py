@@ -20,12 +20,13 @@ class AlgaeSubsystem(Subsystem):
         #self.timer = wpilib.Timer()
 
     def outwardClaw(self):
-        self.clawMotor.set(.1) #1 for first place
+        self.clawMotor.set(.05) #1 for first place
     
     def inwardClaw(self):
-        self.clawMotor.set(-.1) #1 for first place
+        self.clawMotor.set(-.05) #1 for first place
 
     def swivelTheJoint(self):
+        self.jointMotor.set(-0.1)
         pass #ask build team whether they want it on a joystick or buttons
     
     def stopJointMotor(self):
@@ -65,3 +66,20 @@ class inwardClawCommand(Command):
 
     def end(self, interrupted):
         self.algae_subsystem.stopClawMotor()
+class jointrotatecommand(Command):
+    def __init__(self, algae_subsystem):
+        super().__init__()
+
+        self.algae_subsystem = algae_subsystem
+
+    def initialize(self):
+        pass
+
+    def execute(self):
+        self.algae_subsystem.swivelTheJoint()
+
+    def end(self, interrupted):
+        self.algae_subsystem.stopJointMotor()
+
+
+
