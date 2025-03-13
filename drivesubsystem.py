@@ -12,6 +12,11 @@ import swervemodule
 import constants
 import swerveutils
 
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.controller import PPHolonomicDriveController
+from pathplannerlib.config import RobotConfig, PIDConstants
+from wpilib import DriverStation
+
 from commands2 import Command
 # import networklogger
 
@@ -80,8 +85,29 @@ class DriveSubsystem:
         # logger object for sending data to smart dashboard
         # self.logger = networklogger.NetworkLogger()
 
+        config = RobotConfig.fromGUISettings()
+
+        AutoBuilder.configure(
+            self.getPose, # Robot pose supplier
+            self.resetOdometry, # Method to reset odometry (will be called if your auto has a starting pose)
+            self.getRobotRelativeSpeeds, # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            lambda speeds, feedforwards: self.driveRobotRelative(speeds), # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also outputs individual module feedforwards
+            PPHolonomicDriveController( # PPHolonomicController is the built in path following controller for holonomic drive trains
+                PIDConstants(5.0, 0.0, 0.0), # Translation PID constants
+                PIDConstants(5.0, 0.0, 0.0) # Rotation PID constants
+            ),
+            config, # The robot configuration
+            self.shouldFlipPath, # Supplier to control path flipping based on alliance color
+            self # Reference to this subsystem to set requirements
+        )
 
 
+    def shouldFlipPath():
+        # Boolean supplier that controls when the path will be mirrored for the red alliance
+        # This will flip the path being followed to the red side of the field.
+        # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        return DriverStation.getAlliance() == DriverStation.Alliance.kRed
+    
     def periodic(self):
         self.odometry.update(
             # wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(self.gyro.getAngle())),
@@ -213,3 +239,21 @@ class DriveSubsystem:
     # Resets the odometry to the specified pose
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
         self.odometry.resetPosition(self.getHeading(), (self.front_left.get_position(), self.front_right.get_position(), self.rear_left.get_position(), self.rear_right.get_position()), pose)
+
+    def getRobotRelativeSpeeds(self) -> wpimath.kinematics.ChassisSpeeds:
+        module_states = (
+            self.front_left.get_state(),
+            self.front_right.get_state(),
+            self.rear_left.get_state(),
+            self.rear_right.get_state()
+        )
+        return self.kDriveKinematics.toChassisSpeeds(module_states)
+    
+    def driveRobotRelative(self, speeds: wpimath.kinematics.ChassisSpeeds) -> None:
+        module_states = self.kDriveKinematics.toSwerveModuleStates(speeds)
+        self.kDriveKinematics.desaturateWheelSpeeds(module_states, constants.kMaxSpeed)
+        
+        self.front_left.set_desired_state(module_states[0])
+        self.front_right.set_desired_state(module_states[1])
+        self.rear_left.set_desired_state(module_states[2])
+        self.rear_right.set_desired_state(module_states[3])

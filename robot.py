@@ -10,6 +10,9 @@ import elevator
 import constants
 import intake
 from wpilib import Timer
+from pathplannerlib.auto import PathPlannerPath
+from pathplannerlib.auto import AutoBuilder
+# import SmartDashboard
 
 # To see messages from networktables, you must setup logging
 import logging
@@ -18,6 +21,15 @@ logging.basicConfig(level=logging.DEBUG)
 
 class MyRobot(wpilib.TimedRobot):
     def robotInit(self) -> None:
+
+        # # Build an auto chooser. This will use Commands.none() as the default option.
+        # self.autoChooser = AutoBuilder.buildAutoChooser()
+
+        # # Another option that allows you to specify the default auto by its name
+        # # self.autoChooser = AutoBuilder.buildAutoChooser("My Default Auto")
+
+        # SmartDashboard.putData("Auto Chooser", self.autoChooser)
+
         self.driver_controller = commands2.button.CommandXboxController(0)
         self.gadget_controller = commands2.button.CommandXboxController(1)
         self.swerve = drivesubsystem.DriveSubsystem()
@@ -104,6 +116,14 @@ class MyRobot(wpilib.TimedRobot):
 
 
         self.swerve.drive(x_speed, y_speed, rot, field_relative, rate_limit=True)
+
+    def getAutonomousCommand():
+        # This method loads the auto when it is called, however, it is recommended
+        # to first load your paths/autos when code starts, then return the
+        # pre-loaded auto/path
+        path = PathPlannerPath.fromPathFile('Example Path')
+
+        return AutoBuilder.followPath(path)
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
