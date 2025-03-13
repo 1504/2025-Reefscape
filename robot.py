@@ -9,6 +9,7 @@ import commands2
 import elevator
 import constants
 import intake
+import algae
 from wpilib import Timer
 
 # To see messages from networktables, you must setup logging
@@ -23,7 +24,7 @@ class MyRobot(wpilib.TimedRobot):
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
-        self.algae_subsystem = algae.algaesubsystem()
+        self.algae_subsystem = algae.AlgaeSubsystem()
         #CameraServer.startAutomaticCapture("frontcam",0)
         
 
@@ -31,8 +32,8 @@ class MyRobot(wpilib.TimedRobot):
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
-        self.gadget_controller.povUp().whileTrue(algae.grabberout(self.algae_subsystem))
-        self.gadget_controller.povDown().whileTrue(algae.grabberin(self.algae_subsystem))
+        self.gadget_controller.povUp().whileTrue(algae.outwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povDown().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
 
         # #self.gadget_controller.rightTri
         # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
