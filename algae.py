@@ -13,27 +13,31 @@ class AlgaeSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
 
-        self.jointMotor = rev.SparkMax(13, rev.SparkMax.MotorType.kBrushless)
-        self.clawMotor = rev.SparkMax(14, rev.SparkMax.MotorType.kBrushless)
+        self.greenWheelMotor = rev.SparkMax(13, rev.SparkMax.MotorType.kBrushless)
+        self.jointMotor = rev.SparkMax(14, rev.SparkMax.MotorType.kBrushless)
 
         #self.intake_complete = False
         #self.timer = wpilib.Timer()
 
     def outwardClaw(self):
-        self.clawMotor.set(.05) #1 for first place
+        self.jointMotor.set(.05) # Deploys the claw at a slow speed
     
     def inwardClaw(self):
-        self.clawMotor.set(-.05) #1 for first place
+        self.jointMotor.set(-.05) #1 for first place
+    
+    def pauseClaw(self):
+        self.jointMotor.set(0)
 
-    def swivelTheJoint(self):
-        self.jointMotor.set(-0.1)
-        pass #ask build team whether they want it on a joystick or buttons
+    def turnWheelFast(self):
+        self.greenWheelMotor.set(-0.1)
+
+    def turnWheelSlow(self):
+        self.greenWheelMotor.set(-0.02)
     
-    def stopJointMotor(self):
-        self.jointMotor.set(0.0)
+    def stopWheels(self):
+        self.greenWheelMotor.set(0.0)
     
-    def stopClawMotor(self):
-        self.clawMotor.set(0.0)
+
     
     
 
@@ -50,7 +54,7 @@ class outwardClawCommand(Command):
         self.algae_subsystem.outwardClaw()
 
     def end(self, interrupted):
-        self.algae_subsystem.stopClawMotor()
+        self.algae_subsystem.pauseClaw()
 
 class inwardClawCommand(Command):
     def __init__(self, algae_subsystem):
@@ -65,8 +69,10 @@ class inwardClawCommand(Command):
         self.algae_subsystem.inwardClaw()
 
     def end(self, interrupted):
-        self.algae_subsystem.stopClawMotor()
-class jointrotatecommand(Command):
+        self.algae_subsystem.pauseClaw()
+
+
+class grabAlgaeCommand(Command):
     def __init__(self, algae_subsystem):
         super().__init__()
 
@@ -76,10 +82,24 @@ class jointrotatecommand(Command):
         pass
 
     def execute(self):
-        self.algae_subsystem.swivelTheJoint()
+        self.algae_subsystem.turnWheelFast()
 
     def end(self, interrupted):
-        self.algae_subsystem.stopJointMotor()
+        self.algae_subsystem.stopWheels()
 
+class holdAlgaeCommand(Command):
+    def __init__(self, algae_subsystem):
+        super().__init__()
+
+        self.algae_subsystem = algae_subsystem
+
+    def initialize(self):
+        pass
+
+    def execute(self):
+        self.algae_subsystem.turnWheelSlow()
+
+    def end(self, interrupted):
+        self.algae_subsystem.stopWheels()
 
 

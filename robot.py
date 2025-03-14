@@ -34,7 +34,8 @@ class MyRobot(wpilib.TimedRobot):
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
         self.gadget_controller.povDown().whileTrue(algae.outwardClawCommand(self.algae_subsystem))
         self.gadget_controller.povUp().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
-        self.gadget_controller.povRight().whileTrue(algae.jointrotatecommand(self.algae_subsystem))
+        self.gadget_controller.povRight().whileTrue(algae.grabAlgaeCommand(self.algae_subsystem))
+        self.gadget_controller.povRight().toggleOnFalse(algae.holdAlgaeCommand(self.algae_subsystem))
 
     
 
@@ -47,8 +48,7 @@ class MyRobot(wpilib.TimedRobot):
 
     
     def autonomousInit(self) -> None:
-        commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
-        
+        pass
 
     def autonomousPeriodic(self) -> None: 
         pass
@@ -59,8 +59,9 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self) -> None:
         # Teleop periodic logic
-        self.driveWithJoystick(True)
-        
+        #self.driveWithJoystick(True)
+        # don't need to drive while testing algae
+        pass
     
     def testPeriodic(self) -> None:
         pass
