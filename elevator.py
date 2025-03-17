@@ -21,12 +21,18 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#both are same orientation
         self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)
 
-        self.elevatorMotor1.setInverted(True)
-        self.elevatorMotor2.setInverted(True)
+        
+        
 
         #config variables
-        self.elevatorMotor1Config = SparkMaxConfig()
-        self.elevatorMotor2Config = SparkMaxConfig()
+        self.elevatorMotorConfig = SparkMaxConfig()
+
+        self.elevatorMotorConfig.inverted(True)
+
+
+        self.rev_resets = rev.SparkMax.ResetMode.kResetSafeParameters
+        self.rev_persists = rev.SparkMax.PersistMode.kPersistParameters
+
 
         #encoders
         self.elevatorEncoder1 = self.elevatorMotor1.getEncoder()
@@ -34,7 +40,6 @@ class ElevatorSubsystem(Subsystem):
 
         self.elevatorEncoder1.setPosition(0)
         self.elevatorEncoder2.setPosition(0)
-
         #pid controllers 
 
         self.pidController1 = ProfiledPIDController(0.04, 0.0, 0.001,TrapezoidProfile.Constraints(0.05, 0.01))
