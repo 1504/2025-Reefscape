@@ -36,7 +36,7 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.povUp().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
         self.gadget_controller.povRight().whileTrue(algae.grabAlgaeCommand(self.algae_subsystem))
         self.gadget_controller.povRight().toggleOnFalse(algae.holdAlgaeCommand(self.algae_subsystem))
-
+        self.gadget_controller.povLeft().whileTrue(algae.dropalgaecommand(self.algae_subsystem))
     
 
         # #self.gadget_controller.rightTri

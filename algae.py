@@ -32,7 +32,9 @@ class AlgaeSubsystem(Subsystem):
         self.greenWheelMotor.set(-0.1)
 
     def turnWheelSlow(self):
-        self.greenWheelMotor.set(-0.02)
+        self.greenWheelMotor.set(-0.05)
+
+
     
     def stopWheels(self):
         self.greenWheelMotor.set(0.0)
@@ -101,5 +103,15 @@ class holdAlgaeCommand(Command):
 
     def end(self, interrupted):
         self.algae_subsystem.stopWheels()
+class dropalgaecommand(Command):
+    def __init__(self, algae_subsystem):
+        super().__init__()
 
+        self.algae_subsystem = algae_subsystem   
+
+    def initialize(self):
+            pass
+
+    def execute(self):
+        self.algae_subsystem.stopWheels()
 
