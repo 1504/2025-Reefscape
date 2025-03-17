@@ -96,18 +96,20 @@ class DriveSubsystem:
         
         config = RobotConfig.fromGUISettings()
 
+        holonomic_controller =  PPHolonomicDriveController( # PPHolonomicController is the built in path following controller for holonomic drive trains
+                PIDConstants(.04, 0.0, 0.0), # Translation PID constants
+                PIDConstants(2, 0.0, 0.0) # Rotation PID constants
+            )
+
         AutoBuilder.configure(
-            self.getPose, # Robot pose supplier
-            self.resetOdometry, # Method to reset odometry (will be called if your auto has a starting pose)
-            self.getRobotRelativeSpeeds, # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            lambda speeds, feedforwards: self.driveRobotRelative(speeds), # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also outputs individual module feedforwards
-            PPHolonomicDriveController( # PPHolonomicController is the built in path following controller for holonomic drive trains
-                PIDConstants(5.0, 0.0, 0.0), # Translation PID constants
-                PIDConstants(5.0, 0.0, 0.0) # Rotation PID constants
-            ),
-            config, # The robot configuration
-            self.shouldFlipPath, # Supplier to control path flipping based on alliance color
-            self # Reference to this subsystem to set requirements
+            pose_supplier=self.getPose,
+            reset_pose=self.resetOdometry,
+            robot_relative_speeds_supplier=self.getRobotRelativeSpeeds,
+            output=self.driveRobotRelative,
+            controller=holonomic_controller,
+            robot_config=config,
+            should_flip_path=self.shouldFlipPath,
+            drive_subsystem=self
         )
 
         #self.automated_path = None #is this necessary??
@@ -201,8 +203,6 @@ class DriveSubsystem:
         self.rear_left.set_desired_state(bl)
         self.rear_right.set_desired_state(br)
 
-
-
     def setX(self) -> None:
         self.front_left.set_desired_state(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(45))))
         self.front_right.set_desired_state(wpimath.kinematics.SwerveModuleState(0, wpimath.geometry.Rotation2d(wpimath.units.degreesToRadians(-45))))
@@ -235,6 +235,8 @@ class DriveSubsystem:
     # Returns the turn rate of the robot in degrees per second
     def getTurnRate(self) -> float:
         return -self.gyro.getRate()
+    
+    #STUFF PATHPLANNER NEEDS 20250316
 
     # returns the currently-estimated pose
     def getPose(self) -> wpimath.geometry.Pose2d:
@@ -244,21 +246,24 @@ class DriveSubsystem:
     def resetOdometry(self, pose: wpimath.geometry.Pose2d):
         self.odometry.resetPosition(Rotation2d.fromDegrees(self.gyro.getAngle()), self.get_module_positions(), pose)
 
-    # def get_module_positions(self):
-    #     return [m.get_position() for m in self.swerve_modules]
+    def get_module_positions(self):
+        return [m.get_position() for m in self.swerve_modules]
     
-    # def get_module_states(self):
-    #     return [m.get_state() for m in self.swerve_modules]
+    def get_module_states(self):
+        return [m.get_state() for m in self.swerve_modules]
     
     def getRobotRelativeSpeeds(self) -> ChassisSpeeds:
         #return self.kDriveKinematics.toChassisSpeeds(self.get_module_states())
-        module_states = (
-            self.front_left.get_state(),
-            self.front_right.get_state(),
-            self.rear_left.get_state(),
-            self.rear_right.get_state()
-        )
-        return self.kDriveKinematics.toChassisSpeeds(module_states)
+        return self.kDriveKinematics.toChassisSpeeds(self.get_module_states())
+
+    def driveRobotRelative(self, speeds: ChassisSpeeds, feedforwards) -> None:
+        # swerveModuleStates = wpimath.kinematics.SwerveDrive4Kinematics.desaturateWheelSpeeds(swerveModuleStates, constants.kMaxSpeed)
+        # self.setModuleStates(swerveModuleStates)
+        swerveModuleStates = self.kDriveKinematics.toSwerveModuleStates(speeds)
+        swerveModuleStates = self.kDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, constants.kMaxSpeed)
+        for state, module in zip(swerveModuleStates, self.swerve_modules):
+            module.set_desired_state(state)
+
 
     def shouldFlipPath(self):
         # Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -268,14 +273,3 @@ class DriveSubsystem:
             return False
         else:
             return True
-
-    def driveRobotRelative(self, speeds: ChassisSpeeds, feedforwards) -> None:
-        # swerveModuleStates = wpimath.kinematics.SwerveDrive4Kinematics.desaturateWheelSpeeds(swerveModuleStates, constants.kMaxSpeed)
-        # self.setModuleStates(swerveModuleStates)
-        module_states = self.kDriveKinematics.toSwerveModuleStates(speeds)
-        self.kDriveKinematics.desaturateWheelSpeeds(module_states, constants.kMaxSpeed)
-        
-        self.front_left.set_desired_state(module_states[0])
-        self.front_right.set_desired_state(module_states[1])
-        self.rear_left.set_desired_state(module_states[2])
-        self.rear_right.set_desired_state(module_states[3])
