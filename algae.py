@@ -7,7 +7,7 @@ from rev import SparkMax, SparkMaxConfig, SparkBase
 import math
 import constants
 
-#sorryyyy i can't think of a better name
+
 
 class AlgaeSubsystem(Subsystem):
     def __init__(self):
@@ -16,23 +16,25 @@ class AlgaeSubsystem(Subsystem):
         self.greenWheelMotor = rev.SparkMax(13, rev.SparkMax.MotorType.kBrushless)
         self.jointMotor = rev.SparkMax(14, rev.SparkMax.MotorType.kBrushless)
 
+
+
         #self.intake_complete = False
         #self.timer = wpilib.Timer()
 
     def outwardClaw(self):
-        self.jointMotor.set(.05) # Deploys the claw at a slow speed
+        self.jointMotor.set(.03) # Deploys the claw at a slow speed
     
     def inwardClaw(self):
-        self.jointMotor.set(-.05) #1 for first place
+        self.jointMotor.set(-.03) #1 for first place
     
     def pauseClaw(self):
         self.jointMotor.set(0)
 
     def turnWheelFast(self):
-        self.greenWheelMotor.set(-0.1)
+        self.greenWheelMotor.set(-0.075)
 
     def turnWheelSlow(self):
-        self.greenWheelMotor.set(-0.05)
+        self.greenWheelMotor.set(-0.005)
 
 
     
@@ -51,6 +53,9 @@ class outwardClawCommand(Command):
 
     def initialize(self):
         pass
+
+    def isFinished(self):
+        return False
 
     def execute(self):
         self.algae_subsystem.outwardClaw()
@@ -74,7 +79,7 @@ class inwardClawCommand(Command):
         self.algae_subsystem.pauseClaw()
 
 
-class grabAlgaeCommand(Command):
+class holdAlgaeCommand(Command):
     def __init__(self, algae_subsystem):
         super().__init__()
 
@@ -89,21 +94,8 @@ class grabAlgaeCommand(Command):
     def end(self, interrupted):
         self.algae_subsystem.stopWheels()
 
-class holdAlgaeCommand(Command):
-    def __init__(self, algae_subsystem):
-        super().__init__()
 
-        self.algae_subsystem = algae_subsystem
-
-    def initialize(self):
-        pass
-
-    def execute(self):
-        self.algae_subsystem.turnWheelSlow()
-
-    def end(self, interrupted):
-        self.algae_subsystem.stopWheels()
-class dropalgaecommand(Command):
+class dropAlgaeCommand(Command):
     def __init__(self, algae_subsystem):
         super().__init__()
 

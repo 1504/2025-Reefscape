@@ -32,11 +32,11 @@ class MyRobot(wpilib.TimedRobot):
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
-        self.gadget_controller.povDown().whileTrue(algae.outwardClawCommand(self.algae_subsystem))
-        self.gadget_controller.povUp().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
-        self.gadget_controller.povRight().whileTrue(algae.grabAlgaeCommand(self.algae_subsystem))
-        self.gadget_controller.povRight().toggleOnFalse(algae.holdAlgaeCommand(self.algae_subsystem))
-        self.gadget_controller.povLeft().whileTrue(algae.dropalgaecommand(self.algae_subsystem))
+        self.gadget_controller.povDown().onTrue(algae.outwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povUp().toggleOnTrue(algae.inwardClawCommand(self.algae_subsystem))
+
+        self.gadget_controller.povRight().toggleOnTrue(algae.holdAlgaeCommand(self.algae_subsystem))
+        self.gadget_controller.povLeft().onTrue(algae.dropAlgaeCommand(self.algae_subsystem))
     
 
         # #self.gadget_controller.rightTri
@@ -98,7 +98,7 @@ class MyRobot(wpilib.TimedRobot):
         )
 
 
-        self.swerve.drive(x_speed, y_speed, rot, field_relative, rate_limit=True)
+        self.swerve.drive(x_speed, y_speed, rot,field_relative, rate_limit=True)
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
