@@ -32,10 +32,10 @@ class MyRobot(wpilib.TimedRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
         
-        self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
-        self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
-        self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
-        self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
+        self.gadget_controller.a().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1.6,0,'specified',False,0))
+        self.gadget_controller.y().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1.6 +14,0,'specified',False,0))
+        self.gadget_controller.x().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1.6 + 14 +16,0,'specified',False,0))
+        self.gadget_controller.b().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1.6 + 14 + 16 + 25,0,'specified',False,0))
         self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
         self.gadget_controller.leftTrigger().whileTrue(intake.BackCoralCommand(self.intake_subsystem))
         self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
@@ -44,8 +44,8 @@ class MyRobot(wpilib.TimedRobot):
         # #self.gadget_controller.rightTri
         # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
 
-        self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
-        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
+        self.gadget_controller.povUp().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1,0,'incremental',False,0))
+        self.gadget_controller.povDown().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,-1.6,0,'incremental',False,0))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
