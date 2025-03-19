@@ -32,10 +32,11 @@ class MyRobot(wpilib.TimedRobot):
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
-        self.gadget_controller.povDown().onTrue(algae.outwardClawCommand(self.algae_subsystem))
-        self.gadget_controller.povUp().toggleOnTrue(algae.inwardClawCommand(self.algae_subsystem))
+        #
+        self.gadget_controller.povDown().onTrue(algae.inwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povUp().onTrue(algae.outwardClawCommand(self.algae_subsystem))
 
-        self.gadget_controller.povRight().toggleOnTrue(algae.holdAlgaeCommand(self.algae_subsystem))
+        self.gadget_controller.povRight().onTrue(algae.holdAlgaeCommand(self.algae_subsystem))
         self.gadget_controller.povLeft().onTrue(algae.dropAlgaeCommand(self.algae_subsystem))
     
 

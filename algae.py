@@ -22,10 +22,10 @@ class AlgaeSubsystem(Subsystem):
         #self.timer = wpilib.Timer()
 
     def outwardClaw(self):
-        self.jointMotor.set(.03) # Deploys the claw at a slow speed
+        self.jointMotor.set(.04) # Deploys the claw at a slow speed
     
     def inwardClaw(self):
-        self.jointMotor.set(-.03) #1 for first place
+        self.jointMotor.set(-.04) #1 for first place
     
     def pauseClaw(self):
         self.jointMotor.set(0)
@@ -52,16 +52,13 @@ class outwardClawCommand(Command):
         self.algae_subsystem = algae_subsystem
 
     def initialize(self):
-        pass
-
-    def isFinished(self):
-        return False
-
-    def execute(self):
         self.algae_subsystem.outwardClaw()
 
+    def execute(self):
+        pass
+
     def end(self, interrupted):
-        self.algae_subsystem.pauseClaw()
+        pass
 
 class inwardClawCommand(Command):
     def __init__(self, algae_subsystem):
@@ -70,13 +67,15 @@ class inwardClawCommand(Command):
         self.algae_subsystem = algae_subsystem
 
     def initialize(self):
-        pass
+        self.algae_subsystem.inwardClaw()
+        
 
     def execute(self):
-        self.algae_subsystem.inwardClaw()
+        pass
+            
 
     def end(self, interrupted):
-        self.algae_subsystem.pauseClaw()
+        pass
 
 
 class holdAlgaeCommand(Command):
@@ -86,13 +85,13 @@ class holdAlgaeCommand(Command):
         self.algae_subsystem = algae_subsystem
 
     def initialize(self):
-        pass
-
-    def execute(self):
         self.algae_subsystem.turnWheelFast()
 
+    def execute(self):
+        pass
+
     def end(self, interrupted):
-        self.algae_subsystem.stopWheels()
+        pass
 
 
 class dropAlgaeCommand(Command):
@@ -102,8 +101,8 @@ class dropAlgaeCommand(Command):
         self.algae_subsystem = algae_subsystem   
 
     def initialize(self):
-            pass
+        self.algae_subsystem.stopWheels()    
 
     def execute(self):
-        self.algae_subsystem.stopWheels()
+        pass
 
