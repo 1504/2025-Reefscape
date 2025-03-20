@@ -133,7 +133,8 @@ class ElevatorConstants:
     k_gear_ratio = 15 # 9, 12, or 15 gear ratio said victor 1/30/25
                       # we need it seperate for the sim
     k_effective_pulley_diameter = inchesToMeters(1.91) # (https://www.andymark.com/products/25-24-tooth-0-375-in-hex-sprocket) although we're using rev, rev doesn't give a pitch diameter
-    k_meters_per_revolution = math.pi * 2 * k_effective_pulley_diameter / k_gear_ratio # 2 because our elevator goes twice as fast as the chain because continuous rigging
+    #k_meters_per_revolution = math.pi * 2 * k_effective_pulley_diameter / k_gear_ratio # 2 because our elevator goes twice as fast as the chain because continuous rigging
+    k_meters_per_revolution = inchesToMeters(9)/5 # as observed by team
     k_mass_kg = lbsToKilograms(19)
     #k_plant = DCMotor.NEO(2)
 

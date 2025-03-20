@@ -65,8 +65,8 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self) -> None:
         # Teleop periodic logic
-        self.driveWithJoystick(True)
-        
+        #self.driveWithJoystick(True)
+        pass
     
     def testPeriodic(self) -> None:
         pass
