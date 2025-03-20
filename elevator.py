@@ -20,8 +20,8 @@ class ElevatorSubsystem(commands2.TrapezoidProfileSubsystem):
     def __init__(self) -> None:
         super().__init__(
             wpimath.trajectory.TrapezoidProfile.Constraints(
-                0.05,
-                0.01
+                0.1,
+                0.05
             ),
             initial_position=1.3,
             period=0.02
@@ -89,7 +89,9 @@ class ElevatorSubsystem(commands2.TrapezoidProfileSubsystem):
         goal = goal if goal < ElevatorConstants.k_max_height else ElevatorConstants.k_max_height
         goal = goal if goal > ElevatorConstants.k_min_height else ElevatorConstants.k_min_height
         self.goal = goal
-        # print(f'setting goal to {self.goal}')
+        print(f'setting goal to {self.goal}')
+        print(f'current position : {self.get_height}')
+
         self.setGoal(self.goal)
         self.at_goal = False
 
@@ -97,9 +99,9 @@ class ElevatorSubsystem(commands2.TrapezoidProfileSubsystem):
         current_position = self.get_height()
         goal = current_position + delta_meters
         self.set_goal(goal)  # check and set
-        if not silent:
-            message = f'setting {self.getName()} from {current_position:.2f} to {self.goal:.2f}'
-            print(message)
+        
+        message = f'setting {self.getName()} from {current_position:.2f} to {self.goal:.2f}'
+        print(message)
 
     def get_at_goal(self):
         return self.at_goal
@@ -123,6 +125,7 @@ class ElevatorSmartCommand(commands2.Command):
         self.indent = indent
         self.elevator = elevator
         self.height = height
+        self.mode = "specified"
         self.offset = offset  # attempt to have an offset
         self.wait_to_finish = wait_to_finish
         self.addRequirements(self.elevator)  # commandsv2 version of requirements
@@ -133,7 +136,7 @@ class ElevatorSmartCommand(commands2.Command):
 
     def initialize(self) -> None:
             """Called just before this Command runs the first time."""
-            self.start_time = round(self.container.get_enabled_time(), 2)
+            #self.start_time = round(self.container.get_enabled_time(), 2)
             if  self.mode == 'specified':  # send to a specific height
                 self.goal = self.height
                 self.elevator.set_goal(self.goal)
@@ -150,81 +153,15 @@ class ElevatorSmartCommand(commands2.Command):
             return True
 
     def end(self, interrupted: bool) -> None:
-        end_time = self.container.get_enabled_time()
+        #end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
         print_end_message = True
         if print_end_message:
-            print(f"{self.indent * '    '}** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+            print(f"{message} {self.getName()} at")
             #SmartDashboard.putString(f"alert",
             #                         f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
 
-class ElevatorL2Command(Command):
-    def __init__(self, elevator_subsystem):
-        super().__init__()
 
-        self.elevator_subsystem = elevator_subsystem
-
-        
-    #stopped here
-    def initialize(self):
-        pass
-
-    def execute(self):
-        self.elevator_subsystem.goToTarget(self,7.6)
-
-    def end(self, interrupted):
-        self.elevator_subsystem.stop()
-
-class ElevatorL3Command(Command):
-    def __init__(self, elevator_subsystem):
-        super().__init__()
-
-        self.elevator_subsystem = elevator_subsystem
-
-        
-    #stopped here
-    def initialize(self):
-        pass
-
-    def execute(self):
-        self.elevator_subsystem.goToTarget(self,16.3)
-
-    def end(self, interrupted):
-        self.elevator_subsystem.stop()
-
-class ElevatorL4Command(Command):
-    def __init__(self, elevator_subsystem):
-        super().__init__()
-
-        self.elevator_subsystem = elevator_subsystem
-
-        
-    #stopped here
-    def initialize(self):
-        pass
-
-    def execute(self):
-        self.elevator_subsystem.goToTarget(self,31.5)
-
-    def end(self, interrupted):
-        self.elevator_subsystem.stop()
-
-class UpCommand(Command):
-    def __init__(self, elevator_subsystem):
-        super().__init__()
-
-        self.elevator_subsystem = elevator_subsystem
-
-        
-    #stopped here
-    def initialize(self):
-        pass
-
-    def execute(self):
-        self.elevator_subsystem.up()
-
-    def end(self, interrupted):
-        self.elevator_subsystem.stop()
 
 class printHeightCommand(Command):
     def __init__(self, elevator_subsystem):
@@ -235,10 +172,10 @@ class printHeightCommand(Command):
         
      #stopped here
     def initialize(self):
-        pass
-
-    def execute(self):
         self.elevator_subsystem.printHeight()
 
+    def execute(self):
+        pass
+
     def end(self, interrupted):
-        self.elevator_subsystem.stop()
+        pass

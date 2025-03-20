@@ -33,9 +33,9 @@ class MyRobot(wpilib.TimedRobot):
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
         
         self.gadget_controller.a().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1.6,0,'specified',False,0))
-        self.gadget_controller.y().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1.6 +14,0,'specified',False,0))
-        self.gadget_controller.x().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1.6 + 14 +16,0,'specified',False,0))
-        self.gadget_controller.b().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1.6 + 14 + 16 + 25,0,'specified',False,0))
+        self.gadget_controller.y().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,15.6,0,'specified',False,0))
+        self.gadget_controller.x().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,25,0,'specified',False,0))
+        self.gadget_controller.b().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,36,0,'specified',False,0))
         self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
         self.gadget_controller.leftTrigger().whileTrue(intake.BackCoralCommand(self.intake_subsystem))
         self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
@@ -48,10 +48,10 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.povDown().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,-1.6,0,'incremental',False,0))
     
     def robotPeriodic(self):
-        commands2.CommandScheduler.getInstance().run()
         commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
         commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
-    
+        commands2.CommandScheduler.getInstance().run()
+
     def autonomousInit(self) -> None:
         commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
         
