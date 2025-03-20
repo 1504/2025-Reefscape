@@ -48,9 +48,7 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.povDown().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,-1.6,0,'incremental',False,0))
     
     def robotPeriodic(self):
-        commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
-        commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
-        commands2.CommandScheduler.getInstance().run()
+        commands2.CommandScheduler.getInstance().run
 
     def autonomousInit(self) -> None:
         commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
