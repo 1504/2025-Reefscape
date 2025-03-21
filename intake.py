@@ -64,25 +64,7 @@ class IntakeSubsystem(Subsystem):
             self.rightMotor.set(0.0)
             return True
         return False
-        # if self.coralSensor.get() and not self.intake_complete:
-        #     self.leftMotor.set(-.3)
-        #     self.rightMotor.set(.3)
-        #     print(self.coralSensor.get())
-        # elif not self.intake_complete:
-        #     print ('in first elif')
-        #     self.intake_complete = True
-        #     self.timer.start()
-        # elif self.timer.get() < 0.5:
-        #     print (self.timer.get())
-        #     self.leftMotor.set(-.05)
-        #     self.rightMotor.set(.05)
-        # else:
-        #     print ('stopping')
-        #     self.leftMotor.set(0.0)
-        #     self.rightMotor.set(0.0)
-        #     self.intake_complete = False
-        #     return True
-        # return False
+
     
     
     def slowForwardCoral(self):
