@@ -31,7 +31,7 @@ class AlgaeSubsystem(Subsystem):
         self.jointMotor.set(0)
 
     def turnWheelFast(self):
-        self.greenWheelMotor.set(-0.075)
+        self.greenWheelMotor.set(-0.1)
 
     def turnWheelSlow(self):
         self.greenWheelMotor.set(-0.005)
