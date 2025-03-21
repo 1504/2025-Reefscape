@@ -32,16 +32,28 @@ class MyRobot(commands2.TimedCommandRobot):
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
-        #
+
+
+        # Algae Bindings
         self.gadget_controller.povDown().onTrue(algae.inwardClawCommand(self.algae_subsystem))
         self.gadget_controller.povUp().onTrue(algae.outwardClawCommand(self.algae_subsystem))
 
         self.gadget_controller.povRight().onTrue(algae.holdAlgaeCommand(self.algae_subsystem))
         self.gadget_controller.povLeft().onTrue(algae.dropAlgaeCommand(self.algae_subsystem))
-        
 
-        # #self.gadget_controller.rightTri
-        # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
+        # elevator bindings
+        self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
+        self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
+        self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
+        self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
+        self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
+        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem)) 
+
+        # coral Bindings
+        self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
+        self.gadget_controller.leftTrigger().whileTrue(intake.BackCoralCommand(self.intake_subsystem))
+        self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
+        self.gadget_controller.rightTrigger().whileTrue(intake.fastForwardCoralCommand(self.intake_subsystem))#fast coral
 
     
     def robotPeriodic(self):
