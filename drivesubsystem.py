@@ -61,7 +61,7 @@ class DriveSubsystem:
             constants.kRearRightAbsoluteEncoderOffset
         )
 
-        self.swerve_modules = [self.front_left, self.rear_left, self.front_right, self.rear_right]
+        self.swerve_modules = [self.front_left, self.front_right, self.rear_left, self.rear_right]
 
         # the gyro sensor
         self.gyro = navx.AHRS(navx.AHRS.NavXComType.kMXP_SPI)

@@ -54,43 +54,28 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
         self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
 
-        # #Register Named Commands################################
-        NamedCommands.registerCommand('ElevatorL2Command', elevator.ElevatorL2Command(self.elevator_subsystem))
-        # ##########################################################
-        
-        # #Choosing an Autonomous Program########################
-        # self.defaultAuto = "Default"
-        # self.customAuto = "My Auto"
-        # self.chooser = AutoBuilder.buildAutoChooser()
+        #Register Named Commands################################
+        NamedCommands.registerCommand('go to l2', elevator.ElevatorL2Command(self.elevator_subsystem))
+        NamedCommands.registerCommand('go to l3', elevator.ElevatorL3Command(self.elevator_subsystem))
+        NamedCommands.registerCommand('go to l4', elevator.ElevatorL4Command(self.elevator_subsystem))
+        NamedCommands.registerCommand('go to l1/down', elevator.ElevatorDownCommand(self.elevator_subsystem))
+        NamedCommands.registerCommand('prime coral', intake.PrimeCoralCommand(self.intake_subsystem))
+        NamedCommands.registerCommand('shoot coral', intake.fastForwardCoralCommand(self.intake_subsystem))
 
-        # self.chooser.setDefaultOption("Default Auto", self.defaultAuto)
-        # self.chooser.addOption("My Auto", self.customAuto)
-        # SmartDashboard.putData("Auto choices", self.chooser)
-        # #Now, in autonomousInit and autonomousPeriodic, you can use the m_autoSelected variable to read which option was chosen, and change what happens during the autonomous period.
+
+        #Choosing an Autonomous Program########################
+
+        self.chooser = AutoBuilder.buildAutoChooser()
+        SmartDashboard.putData("Auto Chooser", self.chooser)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
         commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
         commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
     
-    ##################################################AUTON
-    def initialize_dashboard(self):
-        #Choosing an Autonomous Program########################
-        self.defaultAuto = "Default"
-        self.customAuto = "My Auto"
-        self.chooser = AutoBuilder.buildAutoChooser()
-
-        self.chooser.setDefaultOption("Default Auto", self.defaultAuto)
-        self.chooser.addOption("My Auto", self.customAuto)
-        SmartDashboard.putData("Auto choices", self.chooser)
-    
-    
-    def getAutonomousCommand(self):
-        # This method loads the auto when it is called, however, it is recommended
-        # to first load your paths/autos when code starts, then return the
-        # pre-loaded auto/path
-        #return PathPlannerAuto('New New Auto')
-        return self.chooser.getSelected()
+    def getAutonomousCommand(self) -> PathPlannerAuto:
+        #return self.chooser.getSelected()
+        return PathPlannerAuto('default auto')
     
     def autonomousInit(self) -> None:
         self.timer.restart()
