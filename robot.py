@@ -42,12 +42,14 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.rightTrigger().whileTrue(intake.fastForwardCoralCommand(self.intake_subsystem))#fast coral
 
         # #self.gadget_controller.rightTri
-        # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
+        commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
 
         self.gadget_controller.povUp().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1,0,'incremental',False,0))
         self.gadget_controller.povDown().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,-1.6,0,'incremental',False,0))
     
     def robotPeriodic(self):
+        return super().robotPeriodic()
+
         commands2.CommandScheduler.getInstance().run
 
     def autonomousInit(self) -> None:
