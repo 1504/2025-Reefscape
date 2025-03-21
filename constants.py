@@ -120,8 +120,8 @@ class ElevatorConstants:
     k_nt_debugging = False  # print extra values to NT for debugging
     k_name = "elevator"
 
-    k_CAN_id = 4
-    k_follower_CAN_id = 5
+    k_CAN_id = 9
+    k_follower_CAN_id = 10
 
     k_max_velocity_meter_per_second = 2
     k_max_acceleration_meter_per_sec_squared = 5
@@ -138,8 +138,8 @@ class ElevatorConstants:
     k_mass_kg = lbsToKilograms(19)
     #k_plant = DCMotor.NEO(2)
 
-    k_min_height = inchesToMeters(8)
-    k_max_height = inchesToMeters(64)
+    k_min_height = inchesToMeters(1.6)
+    k_max_height = inchesToMeters(35)
     k_tolerance = 2 / 100 # 2 cm
 
     k_sim_starting_height = 2
@@ -170,4 +170,4 @@ class ElevatorConstants:
     k_follower_config.follow(k_CAN_id, invert=True)
     k_follower_config.setIdleMode(SparkMaxConfig.IdleMode.kBrake)
 
-    k_timeofflight = 14 #elevator time of flight CAN ID
+    #k_timeofflight = 14 #elevator time of flight CAN ID

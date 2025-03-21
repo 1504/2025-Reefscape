@@ -23,14 +23,14 @@ class ElevatorSubsystem(commands2.TrapezoidProfileSubsystem):
                 0.1,
                 0.05
             ),
-            initial_position=1.3,
+            initial_position=ElevatorConstants.k_min_height,
             period=0.02
         )
         self.setName("PenguinGoUpElevator")
         self.counter = ElevatorConstants.k_counter_offset
         self.is_moving = False  # may want to keep track of if we are in motion
         self.tolerance = 0.03  # meters - then we will be "at goal"
-        self.goal = 1.3
+        self.goal = inchesToMeters(1.6)
         self.at_goal = True
         self.feedforward = wpimath.controller.ElevatorFeedforward(
             kS=ElevatorConstants.k_kS_volts,
@@ -40,8 +40,8 @@ class ElevatorSubsystem(commands2.TrapezoidProfileSubsystem):
             dt=0.02)
 
         #motor controllers
-        self.motor: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#both are same orientation
-        self.follower: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)
+        self.motor: SparkMax = SparkMax(ElevatorConstants.k_CAN_id, SparkMax.MotorType.kBrushless)#both are same orientation
+        self.follower: SparkMax = SparkMax(ElevatorConstants.k_follower_CAN_id, SparkMax.MotorType.kBrushless)
 
         self.sparks = [self.motor,self.follower]
 
@@ -90,7 +90,7 @@ class ElevatorSubsystem(commands2.TrapezoidProfileSubsystem):
         goal = goal if goal > ElevatorConstants.k_min_height else ElevatorConstants.k_min_height
         self.goal = goal
         print(f'setting goal to {self.goal}')
-        print(f'current position : {self.get_height}')
+        print(f'current position : {self.encoder.getPosition()}')
 
         self.setGoal(self.goal)
         self.at_goal = False

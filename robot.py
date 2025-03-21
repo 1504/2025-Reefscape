@@ -3,6 +3,7 @@ import wpimath
 import wpilib.drive
 import wpimath.filter
 import wpimath.controller
+from wpimath.units import inchesToMeters
 import navx
 import drivesubsystem
 import commands2
@@ -32,10 +33,10 @@ class MyRobot(commands2.TimedCommandRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
         
-        self.gadget_controller.a().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1.6,0,'specified',False,0))
-        self.gadget_controller.y().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,15.6,0,'specified',False,0))
-        self.gadget_controller.x().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,25,0,'specified',False,0))
-        self.gadget_controller.b().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,36,0,'specified',False,0))
+        self.gadget_controller.a().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,inchesToMeters(1.6),0,'specified',False,0))
+        self.gadget_controller.y().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,inchesToMeters(15.6),0,'specified',False,0))
+        self.gadget_controller.x().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,inchesToMeters(25),0,'specified',False,0))
+        self.gadget_controller.b().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,inchesToMeters(36),0,'specified',False,0))
         self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
         self.gadget_controller.leftTrigger().whileTrue(intake.BackCoralCommand(self.intake_subsystem))
         self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
@@ -44,8 +45,8 @@ class MyRobot(commands2.TimedCommandRobot):
         # #self.gadget_controller.rightTri
         commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
 
-        self.gadget_controller.povUp().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,1,0,'incremental',False,0))
-        self.gadget_controller.povDown().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,-1.6,0,'incremental',False,0))
+        self.gadget_controller.povUp().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,inchesToMeters(1),0,'incremental',False,0))
+        self.gadget_controller.povDown().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,inchesToMeters(-1.6),0,'incremental',False,0))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run
