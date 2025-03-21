@@ -36,8 +36,6 @@ class AlgaeSubsystem(Subsystem):
     def turnWheelSlow(self):
         self.greenWheelMotor.set(-0.005)
 
-
-    
     def stopWheels(self):
         self.greenWheelMotor.set(0.0)
     
@@ -56,7 +54,9 @@ class outwardClawCommand(Command):
 
     def execute(self):
         pass
-
+    def isFinished(self):
+        return True
+    
     def end(self, interrupted):
         pass
 
@@ -68,12 +68,12 @@ class inwardClawCommand(Command):
 
     def initialize(self):
         self.algae_subsystem.inwardClaw()
+    def isFinished(self):
+        return True
         
-
     def execute(self):
         pass
             
-
     def end(self, interrupted):
         pass
 
@@ -89,6 +89,8 @@ class holdAlgaeCommand(Command):
 
     def execute(self):
         pass
+    def isFinished(self):
+        return True
 
     def end(self, interrupted):
         pass
@@ -104,5 +106,9 @@ class dropAlgaeCommand(Command):
         self.algae_subsystem.stopWheels()    
 
     def execute(self):
+        pass
+    def isFinished(self):
+        return True
+    def end(self, interrupted):
         pass
 
