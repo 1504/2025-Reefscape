@@ -4,7 +4,7 @@ import wpilib.drive
 import wpimath.filter
 import wpimath.controller
 import navx
-import drivesubsystem
+import drivesubsystem#, auton
 import commands2
 import elevator
 import constants
@@ -23,6 +23,7 @@ class MyRobot(wpilib.TimedRobot):
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
+        #self.auton_subsystem = auton.AutonSubsystem()
 
         #CameraServer.startAutomaticCapture("frontcam",0)
         
@@ -32,17 +33,12 @@ class MyRobot(wpilib.TimedRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
         
-        self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
-        self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
-        self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
-        self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
-        self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
-        self.gadget_controller.leftTrigger().whileTrue(intake.BackCoralCommand(self.intake_subsystem))
-        self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
-        self.gadget_controller.rightTrigger().whileTrue(intake.fastForwardCoralCommand(self.intake_subsystem))#fast coral
+        #self.gadget_controller.a().whileTrue(auton.forwardCommand(self.auton_subsystem))
 
         # #self.gadget_controller.rightTri
         # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
+
+        self.timer = Timer()
 
         self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
         self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
@@ -51,13 +47,32 @@ class MyRobot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().run()
         commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
         commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
+        #commands2.CommandScheduler.registerSubsystem(self.auton_subsystem)
     
     def autonomousInit(self) -> None:
-        commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
-        
+        # commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
+        # self.timer = Timer()
+        # self.timer.start()
+
+        # if self.timer.get() < 2.0:
+        #     self.swerve.drive(0.2, 0, 0, False, True)
+        # else:
+        #     self.swerve.drive(0, 0, 0, False, True)
+        self.timer.reset()
+        self.timer.start()
+
 
     def autonomousPeriodic(self) -> None: 
-        pass
+        if self.timer.get() < 2.0:
+            self.swerve.drive(0, 0, .55, False, True)
+        elif self.timer.get() >= 2.0 and self.timer.get() < 4.0:
+            self.swerve.drive(0.2, 0, 0, False, True)
+        elif self.timer.get() >= 6.0:
+            self.swerve.drive(0, 0, 0, False, True)
+            self.elevator_subsystem.l3()
+
+
+        
 
     def teleopInit(self) -> None:
         pass
