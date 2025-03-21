@@ -65,7 +65,10 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self) -> None:
         # Teleop periodic logic
-        self.driveWithJoystick(True)
+        if self.driver_controller.getLeftTriggerAxis() > 0.1:
+            self.slowdwj(False)
+        else:
+            self.driveWithJoystick(True)
         
     
     def testPeriodic(self) -> None:
@@ -100,6 +103,40 @@ class MyRobot(wpilib.TimedRobot):
                 wpimath.applyDeadband(self.driver_controller.getRightX(), 0.08)
             )
             # * drivesubsystem.kMaxSpeed
+        )
+
+
+        self.swerve.drive(x_speed, y_speed, rot, field_relative, rate_limit=True)
+
+    def slowdwj(self, field_relative: bool) -> None:
+        # Get the x speed. We are inverting this because Xbox controllers return
+        # negative values when we push forward.
+        x_speed = (
+            -self.x_speed_limiter.calculate(
+                wpimath.applyDeadband(self.driver_controller.getLeftY(), 0.08)
+            )
+             * 0.2
+        )
+
+        # Get the y speed or sideways/strafe speed. We are inverting this because
+        # we want a positive value when we pull to the left. Xbox controllers
+        # return positive values when you pull to the right by default.
+        y_speed = (
+            -self.y_speed_limiter.calculate(
+                wpimath.applyDeadband(self.driver_controller.getLeftX(), 0.08)
+            )
+             * 0.2
+        )
+
+        # Get the rate of angular rotation. We are inverting this because we want a
+        # positive value when we pull to the left (remember, CCW is positive in
+        # mathematics). Xbox controllers return positive values when you pull to
+        # the right by default.
+        rot = (
+            -self.rot_limiter.calculate(
+                wpimath.applyDeadband(self.driver_controller.getRightX(), 0.08)
+            )
+             * 0.2
         )
 
 
