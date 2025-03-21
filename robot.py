@@ -9,6 +9,7 @@ import commands2
 import elevator
 import constants
 import intake
+import algae
 from wpilib import Timer
 
 # To see messages from networktables, you must setup logging
@@ -16,14 +17,14 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-class MyRobot(wpilib.TimedRobot):
+class MyRobot(commands2.TimedCommandRobot):
     def robotInit(self) -> None:
         self.driver_controller = commands2.button.CommandXboxController(0)
         self.gadget_controller = commands2.button.CommandXboxController(1)
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
-
+        self.algae_subsystem = algae.AlgaeSubsystem()
         #CameraServer.startAutomaticCapture("frontcam",0)
         
 
@@ -31,30 +32,24 @@ class MyRobot(wpilib.TimedRobot):
         self.x_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
+        #
+        self.gadget_controller.povDown().onTrue(algae.inwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povUp().onTrue(algae.outwardClawCommand(self.algae_subsystem))
+
+        self.gadget_controller.povRight().onTrue(algae.holdAlgaeCommand(self.algae_subsystem))
+        self.gadget_controller.povLeft().onTrue(algae.dropAlgaeCommand(self.algae_subsystem))
         
-        self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
-        self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
-        self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
-        self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
-        self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
-        self.gadget_controller.leftTrigger().whileTrue(intake.BackCoralCommand(self.intake_subsystem))
-        self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
-        self.gadget_controller.rightTrigger().whileTrue(intake.fastForwardCoralCommand(self.intake_subsystem))#fast coral
 
         # #self.gadget_controller.rightTri
         # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
 
-        self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
-        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
     
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        commands2.CommandScheduler.registerSubsystem(self.elevator_subsystem)
-        commands2.CommandScheduler.registerSubsystem(self.intake_subsystem)
+
     
     def autonomousInit(self) -> None:
-        commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
-        
+        pass
 
     def autonomousPeriodic(self) -> None: 
         pass
@@ -140,7 +135,7 @@ class MyRobot(wpilib.TimedRobot):
         )
 
 
-        self.swerve.drive(x_speed, y_speed, rot, field_relative, rate_limit=True)
+        self.swerve.drive(x_speed, y_speed, rot,field_relative, rate_limit=True)
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
