@@ -38,13 +38,14 @@ class MyRobot(wpilib.TimedRobot):
 
         self.gadget_controller.povRight().onTrue(algae.holdAlgaeCommand(self.algae_subsystem))
         self.gadget_controller.povLeft().onTrue(algae.dropAlgaeCommand(self.algae_subsystem))
-    
+        commands2.CommandScheduler.registerSubsystem(self.algae_subsystem)
 
         # #self.gadget_controller.rightTri
         # gger().whileTrue(elevator.printHeightCommand(self.elevator_subsystem))
 
     
     def robotPeriodic(self):
+        
         commands2.CommandScheduler.getInstance().run()
 
     
