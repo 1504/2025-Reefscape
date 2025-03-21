@@ -16,7 +16,7 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-class MyRobot(wpilib.TimedRobot):
+class MyRobot(commands2.TimedCommandRobot):
     def robotInit(self) -> None:
         self.driver_controller = commands2.button.CommandXboxController(0)
         self.gadget_controller = commands2.button.CommandXboxController(1)
@@ -48,9 +48,9 @@ class MyRobot(wpilib.TimedRobot):
         self.gadget_controller.povDown().onTrue(elevator.ElevatorSmartCommand(self.elevator_subsystem,-1.6,0,'incremental',False,0))
     
     def robotPeriodic(self):
-        return super().robotPeriodic()
-
         commands2.CommandScheduler.getInstance().run
+        return super().robotPeriodic()
+        
 
     def autonomousInit(self) -> None:
         commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
