@@ -73,17 +73,18 @@ class MyRobot(commands2.TimedCommandRobot):
         #     self.swerve.drive(0, 0, 0, False, True)
         self.timer.reset()
         self.timer.start()
+        self.auton_timer=1.9
 
 
-    def autonomousPeriodic(self) -> None: 
-        if self.timer.get() < 1.75:
+    def autonomousPeriodic(self) -> None:
+        if self.timer.get() < self.auton_timer:
             self.swerve.drive(0, 0, .55, False, True)
-        elif self.timer.get() >= 1.75 and self.timer.get() < 4.25:
+        elif self.timer.get() >= self.auton_timer and self.timer.get() < self.auton_timer+2.5:
             self.swerve.drive(0.2, 0, 0, False, True)
-        elif self.timer.get() >= 4.25 and self.timer.get() < 6:
+        elif self.timer.get() >= self.auton_timer+2.5 and self.timer.get() < self.auton_timer+4.55:
             self.swerve.drive(0, 0, 0, False, True)
             self.elevator_subsystem.l2()
-            if self.timer.get() >= 5.25 and self.timer.get() < 6:
+            if self.timer.get() >= self.auton_timer+4.25 and self.timer.get() < self.auton_timer+4.75:
                 self.intake_subsystem.slowForwardCoral()
         else:
             self.swerve.drive(0, 0, 0, False, True)
@@ -96,7 +97,9 @@ class MyRobot(commands2.TimedCommandRobot):
 
     def teleopPeriodic(self) -> None:
         # Teleop periodic logic
-        if self.driver_controller.getLeftTriggerAxis() > 0.1:
+        if self.driver_controller.getLeftTriggerAxis() > 0.1: 
+            self.slowdwj(False)
+        elif self.driver_controller.getRightTriggerAxis() > 0.1:
             self.slowdwj(False)
         else:
             self.driveWithJoystick(True)
