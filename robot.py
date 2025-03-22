@@ -46,8 +46,9 @@ class MyRobot(commands2.TimedCommandRobot):
         self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
         self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
         self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
-        self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
-        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem)) 
+        
+        commands2.button.Trigger(lambda: self.gadget_controller.getLeftY() < -0.5).whileTrue(elevator.UpCommand(self.elevator_subsystem))
+        commands2.button.Trigger(lambda: self.gadget_controller.getLeftY() > 0.5).whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
 
         # coral Bindings
         self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
