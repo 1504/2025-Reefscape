@@ -98,14 +98,14 @@ class ElevatorSubsystem(Subsystem):
     
     
     def up(self):
-         self.elevatorMotor1.set(0.05)
-         self.elevatorMotor2.set(0.05)
+         self.elevatorMotor1.set(0.07)
+         self.elevatorMotor2.set(0.07)
+
     def downManual(self):
+        self.elevatorMotor1.set(-0.03)
+        self.elevatorMotor2.set(-0.03)
 
-        self.elevatorMotor1.set(-0.05)
-        self.elevatorMotor2.set(-0.05)
     def down(self):
-
         self.elevatorMotor1.set(-0.15)
         self.elevatorMotor2.set(-0.15)
 

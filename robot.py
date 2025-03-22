@@ -56,16 +56,39 @@ class MyRobot(commands2.TimedCommandRobot):
         self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
         self.gadget_controller.rightTrigger().whileTrue(intake.fastForwardCoralCommand(self.intake_subsystem))#fast coral
 
-    
+        self.timer = Timer()
+
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
 
     
     def autonomousInit(self) -> None:
-        pass
+        # commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
+        # self.timer = Timer()
+        # self.timer.start()
+
+        # if self.timer.get() < 2.0:
+        #     self.swerve.drive(0.2, 0, 0, False, True)
+        # else:
+        #     self.swerve.drive(0, 0, 0, False, True)
+        self.timer.reset()
+        self.timer.start()
+
 
     def autonomousPeriodic(self) -> None: 
-        pass
+        if self.timer.get() < 1.75:
+            self.swerve.drive(0, 0, .55, False, True)
+        elif self.timer.get() >= 1.75 and self.timer.get() < 4.25:
+            self.swerve.drive(0.2, 0, 0, False, True)
+        elif self.timer.get() >= 4.25 and self.timer.get() < 6:
+            self.swerve.drive(0, 0, 0, False, True)
+            self.elevator_subsystem.l2()
+            if self.timer.get() >= 5.25 and self.timer.get() < 6:
+                self.intake_subsystem.slowForwardCoral()
+        else:
+            self.swerve.drive(0, 0, 0, False, True)
+            self.elevator_subsystem.stop()
+            self.intake_subsystem.stop()
 
     def teleopInit(self) -> None:
         pass
