@@ -35,19 +35,20 @@ class MyRobot(commands2.TimedCommandRobot):
 
 
         # Algae Bindings
-        self.gadget_controller.povDown().onTrue(algae.inwardClawCommand(self.algae_subsystem))
-        self.gadget_controller.povUp().onTrue(algae.outwardClawCommand(self.algae_subsystem))
-
-        self.gadget_controller.povRight().onTrue(algae.holdAlgaeCommand(self.algae_subsystem))
-        self.gadget_controller.povLeft().onTrue(algae.dropAlgaeCommand(self.algae_subsystem))
+        self.gadget_controller.povRight().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povUp().whileTrue(algae.holdAlgaeCommand(self.algae_subsystem))
+        self.gadget_controller.povLeft().whileTrue(algae.outwardClawCommand(self.algae_subsystem))
 
         # elevator bindings
         self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
         self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
         self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
         self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
-        self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
-        self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem)) 
+        # self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
+        # self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem)) 
+        commands2.button.Trigger(lambda: self.gadget_controller.getLeftY() < -0.5).whileTrue(elevator.UpCommand(self.elevator_subsystem))
+        commands2.button.Trigger(lambda: self.gadget_controller.getLeftY() > 0.5).whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
+
 
         # coral Bindings
         self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
