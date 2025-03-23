@@ -77,14 +77,25 @@ class MyRobot(commands2.TimedCommandRobot):
 
 
     def autonomousPeriodic(self) -> None:
+        # turn 180
         if self.timer.get() < self.auton_timer:
-            self.swerve.drive(0, 0, .55, False, True)
+            self.swerve.drive(0, 0, 0.55, False, True)
+
+        # drive forward line --> reef
         elif self.timer.get() >= self.auton_timer and self.timer.get() < self.auton_timer+3:
             self.swerve.drive(0.2, 0, 0, False, True)
-        elif self.timer.get() >= self.auton_timer+3 and self.timer.get() < self.auton_timer+5.05:
+
+        # turn 45 right / adjust 0.95 (1)
+        elif self.timer.get() >= self.auton_timer and self.timer.get() < self.auton_timer+3.85:
+            self.swerve.drive(0, 0, -0.55, False, True)
+
+        elif self.timer.get() >= self.auton_timer+3.85 and self.timer.get() < self.auton_timer+6.0:
+            self.swerve.drive(0.2, 0, 0, False, True)
+
+        # stop  driving, score coral
+        elif self.timer.get() >= self.auton_timer+6 and self.timer.get() < self.auton_timer+8:
             self.swerve.drive(0, 0, 0, False, True)
-            #self.elevator_subsystem.l2()
-            if self.timer.get() >= self.auton_timer+4.75 and self.timer.get() < self.auton_timer+5.05:
+            if self.timer.get() >= self.auton_timer+6.5 and self.timer.get() < self.auton_timer+7:
                 self.intake_subsystem.slowForwardCoral()
         else:
             self.swerve.drive(0, 0, 0, False, True)
