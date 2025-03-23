@@ -35,20 +35,20 @@ class MyRobot(commands2.TimedCommandRobot):
 
 
         # Algae Bindings
-        self.gadget_controller.povDown().onTrue(algae.inwardClawCommand(self.algae_subsystem))
-        self.gadget_controller.povUp().onTrue(algae.outwardClawCommand(self.algae_subsystem))
-
-        self.gadget_controller.povRight().onTrue(algae.holdAlgaeCommand(self.algae_subsystem))
-        self.gadget_controller.povLeft().onTrue(algae.dropAlgaeCommand(self.algae_subsystem))
+        self.gadget_controller.povRight().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povUp().whileTrue(algae.holdAlgaeCommand(self.algae_subsystem))
+        self.gadget_controller.povLeft().whileTrue(algae.outwardClawCommand(self.algae_subsystem))
 
         # elevator bindings
         self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
         self.gadget_controller.y().whileTrue(elevator.ElevatorL4Command(self.elevator_subsystem))
         self.gadget_controller.x().whileTrue(elevator.ElevatorL3Command(self.elevator_subsystem))
         self.gadget_controller.b().whileTrue(elevator.ElevatorL2Command(self.elevator_subsystem))
-        
+        # self.gadget_controller.povUp().whileTrue(elevator.UpCommand(self.elevator_subsystem))
+        # self.gadget_controller.povDown().whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem)) 
         commands2.button.Trigger(lambda: self.gadget_controller.getLeftY() < -0.5).whileTrue(elevator.UpCommand(self.elevator_subsystem))
         commands2.button.Trigger(lambda: self.gadget_controller.getLeftY() > 0.5).whileTrue(elevator.ElevatorDownManualCommand(self.elevator_subsystem))
+
 
         # coral Bindings
         self.gadget_controller.leftBumper().whileTrue(intake.PrimeCoralCommand(self.intake_subsystem))
@@ -56,16 +56,40 @@ class MyRobot(commands2.TimedCommandRobot):
         self.gadget_controller.rightBumper().whileTrue(intake.slowForwardCoralCommand(self.intake_subsystem))#slow corla
         self.gadget_controller.rightTrigger().whileTrue(intake.fastForwardCoralCommand(self.intake_subsystem))#fast coral
 
-    
+        self.timer = Timer()
+
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
 
     
     def autonomousInit(self) -> None:
-        pass
+        # commands2.CommandScheduler.getInstance().schedule(commands2.InstantCommand(lambda: self.swerve.drive(-0.2, 0, 0, False, True)))
+        # self.timer = Timer()
+        # self.timer.start()
 
-    def autonomousPeriodic(self) -> None: 
-        pass
+        # if self.timer.get() < 2.0:
+        #     self.swerve.drive(0.2, 0, 0, False, True)
+        # else:
+        #     self.swerve.drive(0, 0, 0, False, True)
+        self.timer.reset()
+        self.timer.start()
+        self.auton_timer=1.9
+
+
+    def autonomousPeriodic(self) -> None:
+        if self.timer.get() < self.auton_timer:
+            self.swerve.drive(0, 0, .55, False, True)
+        elif self.timer.get() >= self.auton_timer and self.timer.get() < self.auton_timer+3:
+            self.swerve.drive(0.2, 0, 0, False, True)
+        elif self.timer.get() >= self.auton_timer+3 and self.timer.get() < self.auton_timer+5.05:
+            self.swerve.drive(0, 0, 0, False, True)
+            #self.elevator_subsystem.l2()
+            if self.timer.get() >= self.auton_timer+4.75 and self.timer.get() < self.auton_timer+5.05:
+                self.intake_subsystem.slowForwardCoral()
+        else:
+            self.swerve.drive(0, 0, 0, False, True)
+            self.elevator_subsystem.stop()
+            self.intake_subsystem.stop()
 
     def teleopInit(self) -> None:
         pass
@@ -73,7 +97,9 @@ class MyRobot(commands2.TimedCommandRobot):
 
     def teleopPeriodic(self) -> None:
         # Teleop periodic logic
-        if self.driver_controller.getLeftTriggerAxis() > 0.1:
+        if self.driver_controller.getLeftTriggerAxis() > 0.1: 
+            self.slowdwj(False)
+        elif self.driver_controller.getRightTriggerAxis() > 0.1:
             self.slowdwj(False)
         else:
             self.driveWithJoystick(True)
