@@ -20,6 +20,8 @@ class ElevatorSubsystem(Subsystem):
         self.elevatorMotor1: SparkMax = SparkMax(9, SparkMax.MotorType.kBrushless)#both are same orientation
         self.elevatorMotor2: SparkMax = SparkMax(10, SparkMax.MotorType.kBrushless)
 
+        self.elevator_offset=1
+
         self.elevatorMotor1.setInverted(True)
         self.elevatorMotor2.setInverted(True)
 
@@ -39,8 +41,8 @@ class ElevatorSubsystem(Subsystem):
         #self.pidController2 = self.elevatorMotor2.getClosedLoopController()
         #self.elevatorMotor1Config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
         #self.elevatorMotor2Config.closedLoop.setFeedbackSensor(rev.ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
-        self.pidController1 = PIDController(0.04,0.0, 0.001)#.02 , 004 / .04, 0, 0
-        self.pidController2 = PIDController(0.04,0.0, 0.001)
+        self.pidController1 = PIDController(0.06,0.0, 0.001)#.02 , 004 / .04, 0, 0
+        self.pidController2 = PIDController(0.06,0.0, 0.001)
 
         # Initial gains
         #self.elevatorMotor1Config.closedLoop.P(.1)
@@ -74,8 +76,8 @@ class ElevatorSubsystem(Subsystem):
         #self.elevatorMotor2Config.closedLoop.P(self.kP)
         
         #self.pidController1.setReference(10, rev.SparkMax.ControlType.kPosition)
-        self.elevatorMotor1.set((-1*self.pidController1.calculate(7.6, self.elevatorEncoder1.getPosition()))*0.5)
-        self.elevatorMotor2.set((-1*self.pidController1.calculate(7.6, self.elevatorEncoder1.getPosition()))*0.5)
+        self.elevatorMotor1.set((-1*self.pidController1.calculate(7.6+self.elevator_offset, self.elevatorEncoder1.getPosition()))*0.5)
+        self.elevatorMotor2.set((-1*self.pidController1.calculate(7.6+self.elevator_offset, self.elevatorEncoder1.getPosition()))*0.5)
         #self.pidController2.setReference(10, rev.SparkMax.ControlType.kPosition)
         #self.pidController2.setReference(self.setpointl1, rev.SparkMax.ControlType.kPosition)
         #print("Position")
@@ -83,23 +85,23 @@ class ElevatorSubsystem(Subsystem):
         #print(self.elevatorEncoder2.getPosition())
         #print(self.elevatorMotor1.getBusVoltage())
         #print("Calculated")
-        #print(self.pidController1.calculate(10, self.elevatorEncoder1.getPosition()))
+        #print(self.pidController1.calculate(10, self.elevatorEncoder1.getPosition()))+self.elevator_offset
     
     def l3(self):
-        self.elevatorMotor1.set((-1*self.pidController1.calculate(16.3, self.elevatorEncoder1.getPosition()))*0.5)
-        self.elevatorMotor2.set((-1*self.pidController1.calculate(16.3, self.elevatorEncoder1.getPosition()))*0.5)
+        self.elevatorMotor1.set((-1*self.pidController1.calculate(16.3+self.elevator_offset, self.elevatorEncoder1.getPosition()))*0.5)
+        self.elevatorMotor2.set((-1*self.pidController1.calculate(16.3+self.elevator_offset, self.elevatorEncoder1.getPosition()))*0.5)
 
     def l4(self):
-        self.elevatorMotor1.set((-1*self.pidController1.calculate(31.5, self.elevatorEncoder1.getPosition()))*0.5)
-        self.elevatorMotor2.set((-1*self.pidController1.calculate(31.5, self.elevatorEncoder1.getPosition()))*0.5)
+        self.elevatorMotor1.set((-1*self.pidController1.calculate(31.5+self.elevator_offset, self.elevatorEncoder1.getPosition()))*0.5)
+        self.elevatorMotor2.set((-1*self.pidController1.calculate(31.5+self.elevator_offset, self.elevatorEncoder1.getPosition()))*0.5)
 
     def printHeight(self):
         print(self.elevatorEncoder1.getPosition())
     
     
     def up(self):
-         self.elevatorMotor1.set(0.07)
-         self.elevatorMotor2.set(0.07)
+         self.elevatorMotor1.set(0.1)
+         self.elevatorMotor2.set(0.1)
 
     def downManual(self):
         self.elevatorMotor1.set(-0.03)

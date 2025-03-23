@@ -79,12 +79,12 @@ class MyRobot(commands2.TimedCommandRobot):
     def autonomousPeriodic(self) -> None:
         if self.timer.get() < self.auton_timer:
             self.swerve.drive(0, 0, .55, False, True)
-        elif self.timer.get() >= self.auton_timer and self.timer.get() < self.auton_timer+2.5:
+        elif self.timer.get() >= self.auton_timer and self.timer.get() < self.auton_timer+3:
             self.swerve.drive(0.2, 0, 0, False, True)
-        elif self.timer.get() >= self.auton_timer+2.5 and self.timer.get() < self.auton_timer+4.55:
+        elif self.timer.get() >= self.auton_timer+3 and self.timer.get() < self.auton_timer+5.05:
             self.swerve.drive(0, 0, 0, False, True)
-            self.elevator_subsystem.l2()
-            if self.timer.get() >= self.auton_timer+4.25 and self.timer.get() < self.auton_timer+4.75:
+            #self.elevator_subsystem.l2()
+            if self.timer.get() >= self.auton_timer+4.75 and self.timer.get() < self.auton_timer+5.05:
                 self.intake_subsystem.slowForwardCoral()
         else:
             self.swerve.drive(0, 0, 0, False, True)
