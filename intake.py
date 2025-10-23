@@ -11,42 +11,26 @@ class IntakeSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
 
-        #0 & 1 are placeholder numbers
         self.leftMotor = rev.SparkMax(12, rev.SparkMax.MotorType.kBrushless)
         self.rightMotor = rev.SparkMax(11, rev.SparkMax.MotorType.kBrushless)
-        #self.placeholderNumber = 0 #Replace with actual number
+
         self.coralSensor = DigitalInput(9)
         self.coralSensor2 = DigitalInput(8)
         self.intake_complete = False
         self.timer = wpilib.Timer()
 
-        #conveyorDetector.whileActiveContinuous(new RunMotor());
-        #self.motors = wpilib.MotorControllerGroup(self.leftMotor, self.rightMotor)
 
     def fastForwardCoral(self):
-        #current_position = self.intakeEncoder1.get()
-        #control_effort = self.pidCE1.setReference(current_position, 1)
-        #self.leftMotor.set(control_effort)
-        #self.rightMotor.set(control_effort)
-        #placeholder values
         self.leftMotor.set(-0.6)
         self.rightMotor.set(0.6)
 
     def backCoral(self):
-        #current_position = self.intakeEncoder1.get()
-        #control_effort = self.pidCE1.setReference(current_position, 1)
-        #self.leftMotor.set(control_effort)
-        #self.rightMotor.set(control_effort)
-        #placeholder values
         self.leftMotor.set(0.1)
         self.rightMotor.set(-0.1)
     
     def stop(self):
         self.leftMotor.set(0.0)
         self.rightMotor.set(0.0)
-    
-    #def getCoralSensorInput(self):
-        #self.coralSensor.get()#true when & false when?
     
     def primeCoral(self):
         if self.coralSensor.get() and self.coralSensor2.get():
@@ -64,14 +48,10 @@ class IntakeSubsystem(Subsystem):
             self.rightMotor.set(0.0)
             return True
         return False
-
-    
     
     def slowForwardCoral(self):
-        #button press and go
         self.leftMotor.set(-0.2)
         self.rightMotor.set(0.2)
-
 
 class fastForwardCoralCommand(Command):
     def __init__(self, intake_subsystem):
