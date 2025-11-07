@@ -7,7 +7,7 @@ from rev import SparkMax, SparkMaxConfig, SparkBase
 import math
 import constants
 
-
+import time
 
 class AlgaeSubsystem(Subsystem):
     def __init__(self):
@@ -41,9 +41,14 @@ class outwardClawCommand(Command):
 
     def initialize(self):
         self.algae_subsystem.outwardClaw()
+        self.start_time = time.time()
+        self.inTime = time.time() + 1.37
 
     def execute(self):
         pass
+
+    def isFinished(self):
+        return time.time() > self.inTime
 
     def end(self, interrupted):
         self.algae_subsystem.stop()
@@ -55,10 +60,16 @@ class inwardClawCommand(Command):
         self.algae_subsystem = algae_subsystem
 
     def initialize(self):
-        pass
+        self.algae_subsystem.inwardClaw()
+        self.start_time = time.time()
+        self.inTime = time.time() + 1.37  # Hold for 1 seconds
         
     def execute(self):
-        self.algae_subsystem.inwardClaw()
+        #self.algae_subsystem.inwardClaw()
+        pass
+
+    def isFinished(self):
+        return time.time() > self.inTime
             
     def end(self, interrupted): 
         self.algae_subsystem.stop()
@@ -71,10 +82,16 @@ class holdAlgaeCommand(Command):
         self.algae_subsystem = algae_subsystem
 
     def initialize(self):
-        pass
-
-    def execute(self):
         self.algae_subsystem.turnWheelFast()
+        # self.start_time = time.time()
+        # self.inTime = time.time() + 10  # Hold for 10 seconds
+           
+    def isFinished(self):
+        # return time.time() > self.inTime
+        pass
+    
+    def execute(self):
+        pass
 
     def end(self, interrupted):
         self.algae_subsystem.stop()

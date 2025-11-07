@@ -31,9 +31,9 @@ class MyRobot(commands2.TimedCommandRobot):
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
         # Algae Bindings
-        self.gadget_controller.povRight().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
-        self.gadget_controller.povUp().whileTrue(algae.holdAlgaeCommand(self.algae_subsystem))
-        self.gadget_controller.povLeft().whileTrue(algae.outwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povRight().onTrue(algae.inwardClawCommand(self.algae_subsystem))
+        self.gadget_controller.povUp().toggleOnFalse(algae.holdAlgaeCommand(self.algae_subsystem))
+        self.gadget_controller.povLeft().onTrue(algae.outwardClawCommand(self.algae_subsystem))
 
         # elevator bindings
         self.gadget_controller.a().whileTrue(elevator.ElevatorDownCommand(self.elevator_subsystem))
