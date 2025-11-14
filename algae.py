@@ -65,7 +65,6 @@ class inwardClawCommand(Command):
         self.inTime = time.time() + 1.37  # Hold for 1 seconds
         
     def execute(self):
-        #self.algae_subsystem.inwardClaw()
         pass
 
     def isFinished(self):
@@ -83,11 +82,8 @@ class holdAlgaeCommand(Command):
 
     def initialize(self):
         self.algae_subsystem.turnWheelFast()
-        # self.start_time = time.time()
-        # self.inTime = time.time() + 10  # Hold for 10 seconds
            
     def isFinished(self):
-        # return time.time() > self.inTime
         pass
     
     def execute(self):
