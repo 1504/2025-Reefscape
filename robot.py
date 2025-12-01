@@ -1,13 +1,9 @@
 import wpilib
 import wpimath
-import wpilib.drive
-import wpimath.filter
-import wpimath.controller
 import navx
 import drivesubsystem
 import commands2
 import elevator
-import constants
 import intake
 import algae
 from wpilib import Timer
@@ -33,6 +29,7 @@ class MyRobot(commands2.TimedCommandRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
+        
 
         # Algae Bindings
         self.gadget_controller.povRight().whileTrue(algae.inwardClawCommand(self.algae_subsystem))
