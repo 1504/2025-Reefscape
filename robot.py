@@ -23,7 +23,7 @@ class MyRobot(wpilib.TimedRobot):
         self.swerve = drivesubsystem.DriveSubsystem()
         self.elevator_subsystem = elevator.ElevatorSubsystem()
         self.intake_subsystem = intake.IntakeSubsystem()
-        self.camera = limelightCamera.LimelightCamera("Limelightt")
+        self.camera = limelightCamera.LimelightCamera("targetCamera")
         
 
         # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -31,11 +31,12 @@ class MyRobot(wpilib.TimedRobot):
         self.y_speed_limiter = wpimath.filter.SlewRateLimiter(3)
         self.rot_limiter = wpimath.filter.SlewRateLimiter(3)
 
-        #self.driver_controller.a().whileTrue(commands2.InstantCommand(lambda: self.swerve.drive(0,0,self.camera.getX()* -0.005,False, rate_limit=True)))
-        #self.driver_controller.a().onFalse(commands2.InstantCommand(lambda: self.swerve.drive(0, 0, 0, False, False)))
+        self.driver_controller.leftBumper().whileTrue(commands2.InstantCommand(lambda: self.swerve.drive(0,0,self.camera.getX()* -0.005,False, rate_limit=True)))
+        self.driver_controller.leftBumper().onFalse(commands2.InstantCommand(lambda: self.swerve.drive(0, 0, 0, False, False)))
        
     def robotPeriodic(self):
-        print()
+        commands2.CommandScheduler.getInstance().run()
+        commands2.CommandScheduler.registerSubsystem(self.swerve)
     
     def autonomousInit(self) -> None:
         pass
@@ -57,9 +58,9 @@ class MyRobot(wpilib.TimedRobot):
         pass
 
     def getXofObject(self) -> None:
-        targetX = self.camera.getX()
-        print(targetX)
-        turn_speed = -0.005 * targetX
+        x = self.camera.getX()
+        print(f"x={x}")
+        turn_speed = -0.005 * x
         self.swerve.drive(0,0,turn_speed,True,rate_limit=True)
 
     def driveWithJoystick(self, field_relative: bool) -> None:
