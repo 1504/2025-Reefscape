@@ -25,7 +25,7 @@ robotpy-hal==2025.2.1.2
 robotpy-halsim-gui==2025.2.1.2
 robotpy-installer==2025.0.3
 robotpy-navx==2025.0.1
-robotpy-rev==2025.0.2
+robotpy-rev==2026.0.1
 robotpy-wpilib-utilities==2025.0.0
 robotpy-wpimath==2025.2.1.2
 robotpy-wpinet==2025.2.1.2
