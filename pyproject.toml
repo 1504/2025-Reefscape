@@ -5,7 +5,7 @@
 
 [tool.robotpy]
 # Version of robotpy this project depends on
-robotpy_version = "2025.3.2.2"
+robotpy_version = "2026.2.1"
 
 [tool.robotpy.pyfrc]
 # specifies the method of testing
